@@ -1,142 +1,229 @@
 <!doctype html>
 <html>
 <head>
-<meta charset="utf-8">
-<title>导航页</title>
-<link href="css/1.css" rel="stylesheet" type="text/css">
-</head>
-	<style>
-	table {
-    margin-left: auto;
-    margin-right: auto;
-    margin: 0 auto;
-}
-.f {
-	color: #0044FF;
-}
-    </style>
+    <meta charset="utf-8">
+    <title>导航页</title>
+    <link href="css/1.css" rel="stylesheet" type="text/css">
+    <style>
+        /* 表格基础样式 */
+        table {
+            margin-left: auto;
+            margin-right: auto;
+            margin: 0 auto;
+        }
+        
+        /* 原有文字颜色类 */
+        .f {
+            color: #0044FF;
+        }
 
+        /* 超链接核心交互样式（移除下划线，新增悬浮变暗效果） */
+        a {
+            display: inline-block; /* 确保动画生效范围正确 */
+            text-decoration: none; /* 清除默认下划线（原有保留，此处再次确认） */
+            transition: all 0.3s ease; /* 统一过渡动画时长和缓动效果 */
+            padding: 4px 8px; /* 增加点击区域，同时为变暗效果提供更明显的范围 */
+            border-radius: 4px; /* 轻微圆角，优化视觉体验（可选，不影响核心功能） */
+        }
+        /* 鼠标悬浮效果：整体变暗（通过背景色叠加实现）+ 轻微缩放 */
+        a:hover {
+            transform: scale(1.1); /* 保留轻微放大，增强交互感知 */
+            background-color: rgba(0, 0, 0, 0.2); /* 黑色半透明背景，实现“变暗”效果 */
+            color: #ffffff !important; /* 变暗时文字变白，提升对比度，避免看不清 */
+        }
+        /* 点击反馈动画（保留，增强按压感） */
+        a:active {
+            transform: scale(0.95); /* 点击瞬间缩小5% */
+            background-color: rgba(0, 0, 0, 0.3); /* 点击时进一步加深暗度，反馈更明显 */
+        }
+
+        /* 原有自下而上淡入动画 */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px); /* 初始位置：下方20px */
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0); /* 最终位置：原始位置 */
+            }
+        }
+        /* 核心元素淡入效果（保留原有逻辑） */
+        body>table,
+        a,
+        img,
+        font,
+        p,
+        td {
+            animation: fadeInUp 1s ease-out forwards;
+            opacity: 0; /* 初始透明 */
+            transform: translateY(20px); /* 初始位移 */
+        }
+        /* 分批次淡入（保留原有逻辑） */
+        body>table {
+            animation-delay: 0.1s;
+        }
+        a {
+            animation-delay: 0.3s;
+        }
+        img {
+            animation-delay: 0.5s;
+        }
+        p,
+        font {
+            animation-delay: 0.7s;
+        }
+    </style>
+</head>
 <body bgcolor="#A8A8A8" link="#000000" vlink="#000000">
-<table width="1800" border="0" cellspacing="0" cellpadding="0">
-  <tbody>
-    <tr>
-      <td width="141" rowspan="2" bgcolor="#5A5A5A"><table width="100%" height="935" border="0" cellpadding="0" cellspacing="0">
+    <table width="1800" border="0" cellspacing="0" cellpadding="0">
         <tbody>
-          <tr>
-            <td height="150" background="image/未标题-2.png"></td>
-          </tr>
-          <tr>
-            <td height="20"><hr color="#000000" size="2"></td>
-          </tr>
-          <tr>
-            <td height="50" align="center"><a href="https://wwah.lanzout.com/iElO62z4ufeb" target="_blank"><font color="#000000" size="+2">极域破解</font></a></td>
-          </tr>
-          <tr>
-            <td height="10"><hr width="120"></td>
-          </tr>
-          <tr>
-			  <td height="50" align="center"><a href="https://wwah.lanzout.com/iXg3j2z4ut2d" target="_blank"><font color="#000000" size="+2">免费VPN</font></a></td>
-          </tr>
-          <tr>
-            <td height="10"><hr width="120"></td>
-          </tr>
-          <tr>
-            <td><table width="100%" height="619" border="0" cellpadding="0" cellspacing="0">
-              <tbody>
-                <tr>
-                  <td height="50" align="center"><a href="https://thehidden-wiki.org/wiki/index.php/Main_Page#Dead_Hidden_Services" target="_blank"><font color="#000000" size="+2">暗网导航</font></a></td>
-                </tr>
-                <tr>
-                  <td height="10"><hr width="120"></td>
-                </tr>
-                <tr>
-                  <td height="50" align="center"><a href="https://torproject.netcologne.de/zh-CN/download/languages/" target="_blank"><font color="#000000" size="+2">暗网浏览器</font></a></td>
-                </tr>
-                <tr>
-                  <td height="10"><hr width="120"></td>
-                </tr>
-                <tr>
-                  <td height="50" align="center"><a href="Web7.html" target="_blank"><font color="#000000" size="+2">近期热点</font></a></td>
-                </tr>
-                <tr>
-                  <td height="10"><hr width="120"></td>
-                </tr>
-                <tr>
-                  <td>&nbsp;</td>
-                </tr>
-                <tr>
-                  <td height="50" align="center"><a href="Web1.html" target="_blank"><font color="#ffffff" size="+2">永久发布页</font></a></td>
-                </tr>
-              </tbody>
-            </table></td>
-          </tr>
-          <tr>
-            <td height="10"><hr width="120"></td>
-          </tr>
-        </tbody>
-      </table></td>
-      <td width="1660" colspan="7" bgcolor="#A8A8A8"><table width="1660" border="0" cellspacing="15" cellpadding="0">
-        <tbody>
-          <tr>
-            <td width="1679" height="230" background="image/未标题-4.png"><table width="100%" height="222" border="0" cellpadding="0" cellspacing="0">
-              <tbody>
-                <tr>
-                  <td width="31%">&nbsp;</td>
-                  <td width="1%">&nbsp;</td>
-                  <td width="68%" rowspan="3" align="center"><p><font color="#FF0004" size="+6">公告</font><br>
-                    <font color="#FF8E00"size="+5" face="黑体">第二届民生科技火影大赛圆满结束</font></p>
-                    <p><font color="" size="+2" ><a href="https://tl-ss.github.io/TLgame" class="f" target="_blank">点此查看详情</a></font></p></td>
-                </tr>
-                <tr>
-                  <td>&nbsp;</td>
-                  <td>&nbsp;</td>
-                  </tr>
-                <tr>
-                  <td><table width="30%" border="0" cellspacing="0" cellpadding="0">
-                    <tbody>
-                      <tr>
-                        <td align="center" bgcolor="#082700"><a href="Web.html"><font color="#000000" size="+3">进入</font></a></td>
-                      </tr>
-                    </tbody>
-                  </table></td>
-                  <td>&nbsp;</td>
-                  </tr>
-              </tbody>
-            </table></td>
-          </tr>
-        </tbody>
-      </table></td>
-    </tr>
-    <tr>
-      <td height="38" colspan="7"><table width="100%" border="0" cellspacing="7.5" cellpadding="7.5">
-        <tbody>
-          <tr>
-            <td width="33.5%"><a href="Web2.html" target="_blank"><img src="image/未标题-5.png" width="526" height="341" alt=""/></a></td>
-            <td width="33.5%"><a href="Web3.html" target="_blank"><img src="image/gal.png" width="526" height="341" alt=""/></a></td>
-            <td width="33.5%"><a href="Web4.html" target="_blank"><img src="image/steam.png" width="526" height="341" alt=""/></a></td>
+            <tr>
+                <td width="141" rowspan="2" bgcolor="#5A5A5A">
+                    <table width="100%" height="935" border="0" cellpadding="0" cellspacing="0">
+                        <tbody>
+                            <tr>
+                                <td height="150" background="image/未标题-2.png"></td>
+                            </tr>
+                            <tr>
+                                <td height="20">
+                                    <hr color="#000000" size="2">
+                                </td>
+                            </tr>
+                            <tr>
+                                <td height="50" align="center"><a href="https://wwah.lanzout.com/iElO62z4ufeb" target="_blank"><font color="#000000" size="+2">极域破解</font></a></td>
+                            </tr>
+                            <tr>
+                                <td height="10">
+                                    <hr width="120">
+                                </td>
+                            </tr>
+                            <tr>
+                                <td height="50" align="center"><a href="https://wwah.lanzout.com/iXg3j2z4ut2d" target="_blank"><font color="#000000" size="+2">免费VPN</font></a></td>
+                            </tr>
+                            <tr>
+                                <td height="10">
+                                    <hr width="120">
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <table width="100%" height="619" border="0" cellpadding="0" cellspacing="0">
+                                        <tbody>
+                                            <tr>
+                                                <td height="50" align="center"><a href="https://thehidden-wiki.org/wiki/index.php/Main_Page#Dead_Hidden_Services" target="_blank"><font color="#000000" size="+2">暗网导航</font></a></td>
+                                            </tr>
+                                            <tr>
+                                                <td height="10">
+                                                    <hr width="120">
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td height="50" align="center"><a href="https://torproject.netcologne.de/zh-CN/download/languages/" target="_blank"><font color="#000000" size="+2">暗网浏览器</font></a></td>
+                                            </tr>
+                                            <tr>
+                                                <td height="10">
+                                                    <hr width="120">
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td height="50" align="center"><a href="Web7.html" target="_blank"><font color="#000000" size="+2">近期热点</font></a></td>
+                                            </tr>
+                                            <tr>
+                                                <td height="10">
+                                                    <hr width="120">
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>&nbsp;</td>
+                                            </tr>
+                                            <tr>
+                                                <td height="50" align="center"><a href="Web1.html" target="_blank"><font color="#ffffff" size="+2">永久发布页</font></a></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td height="10">
+                                    <hr width="120">
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </td>
+                <td width="1660" colspan="7" bgcolor="#A8A8A8">
+                    <table width="1660" border="0" cellspacing="15" cellpadding="0">
+                        <tbody>
+                            <tr>
+                                <td width="1679" height="230" background="image/未标题-4.png">
+                                    <table width="100%" height="222" border="0" cellpadding="0" cellspacing="0">
+                                        <tbody>
+                                            <tr>
+                                                <td width="31%">&nbsp;</td>
+                                                <td width="1%">&nbsp;</td>
+                                                <td width="68%" rowspan="3" align="center">
+                                                    <p><font color="#FF0004" size="+6">公告</font><br>
+                                                        <font color="#FF8E00" size="+5" face="黑体">第二届民生科技火影大赛圆满结束</font>
+                                                    </p>
+                                                    <p><font color="" size="+2"><a href="https://tl-ss.github.io/TLgame" class="f" target="_blank">点此查看详情</a></font></p>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>&nbsp;</td>
+                                                <td>&nbsp;</td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <table width="30%" border="0" cellspacing="0" cellpadding="0">
+                                                        <tbody>
+                                                            <tr>
+                                                                <td align="center" bgcolor="#082700"><a href="Web.html"><font color="#000000" size="+3">进入</font></a></td>
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </td>
+                                                <td>&nbsp;</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </td>
             </tr>
-          <tr>
-            <td><a href="Web5.html" target="_blank"><img src="image/未标题-1.png" width="526" height="341" alt=""/></a></td>
-            <td><a href="https://jiamusi.wbsaotq.buzz/" target="_blank"><img src="image/xz.png" width="526" height="341" alt=""/></a></td>
-            <td><a href="Web6.html" target="_blank"><img src="image/dm.png" width="526" height="341" alt=""/></a></td>
+            <tr>
+                <td height="38" colspan="7">
+                    <table width="100%" border="0" cellspacing="7.5" cellpadding="7.5">
+                        <tbody>
+                            <tr>
+                                <td width="33.5%"><a href="Web2.html" target="_blank"><img src="image/未标题-5.png" width="526" height="341" alt=""/></a></td>
+                                <td width="33.5%"><a href="Web3.html" target="_blank"><img src="image/gal.png" width="526" height="341" alt=""/></a></td>
+                                <td width="33.5%"><a href="Web4.html" target="_blank"><img src="image/steam.png" width="526" height="341" alt=""/></a></td>
+                            </tr>
+                            <tr>
+                                <td><a href="Web5.html" target="_blank"><img src="image/未标题-1.png" width="526" height="341" alt=""/></a></td>
+                                <td><a href="https://tl-ss.github.io/wallpaper" target="_blank"><img src="image/bz.png" width="526" height="341" alt=""/></a></td>
+                                <td><a href="Web6.html" target="_blank"><img src="image/dm.png" width="526" height="341" alt=""/></a></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </td>
             </tr>
-          </tbody>
-      </table></td>
-    </tr>
-    <tr>
-      <td colspan="8" bgcolor="#2A2A2A" align="center">
-	  <p>&nbsp;</p>
-	    <font color="#B1B1B1" size="+2">版权所有©Timeless</font><br>
-		  <font color="#B1B1B1" size="+2">公安备案号：上哪给你屙备案号去？</font><br>
-		  <font color="#B1B1B1" size="+2">赞助商：没有</font><br>
-		  <font color="#B1B1B1" size="+2">制作组：只有我一个</font>
-		  <br>
-		  <br>
-		  <font color="#B1B1B1" size="+1">2025.10.1/01:09</font>
-      <p>&nbsp;</p>
-	  </td>
-    </tr>
-  </tbody>
-</table>
+            <tr>
+                <td colspan="8" bgcolor="#2A2A2A" align="center">
+                    <p>&nbsp;</p>
+                    <font color="#B1B1B1" size="+2">版权所有©Timeless</font><br>
+                    <font color="#B1B1B1" size="+2">公安备案号：上哪给你屙备案号去？</font><br>
+                    <font color="#B1B1B1" size="+2">赞助商：没有</font><br>
+                    <font color="#B1B1B1" size="+2">制作组：只有我一个</font><br>
+                    <br>
+                    <font color="#B1B1B1" size="+1">2025.10.1/01:09</font>
+                    <p>&nbsp;</p>
+                </td>
+            </tr>
+        </tbody>
+    </table>
 </body>
 </html>
