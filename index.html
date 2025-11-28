@@ -73,6 +73,14 @@
         font {
             animation-delay: 0.7s;
         }
+
+        /* 新增：访问计数样式（深灰色，适配font标签的size=2） */
+        #sss {
+            color: #333333; /* 深灰色 */
+            font-size: inherit; /* 取消固定字号，完全适配font标签的size属性 */
+            font-weight: normal; /* 取消加粗（可选） */
+            margin-top: 10px;
+        }
     </style>
 </head>
 <body bgcolor="#A8A8A8" link="#000000" vlink="#000000">
@@ -135,7 +143,14 @@
                                                 </td>
                                             </tr>
                                             <tr>
-                                                <td>&nbsp;</td>
+                                                <td height="50" align="center"><a href="tsl.html" target="_blank"><font color="#000000" size="+2">小游戏</font>
+                                            </tr>
+                                            <tr>
+                                              <td height="10">
+                                                    <hr width="120">
+                                            </tr>
+                                            <tr>
+                                              <td>&nbsp;</td>
                                             </tr>
                                             <tr>
                                                 <td height="50" align="center"><a href="Web1.html" target="_blank"><font color="#ffffff" size="+2">永久发布页</font></a></td>
@@ -162,12 +177,18 @@
                                             <tr>
                                                 <td width="31%">&nbsp;</td>
                                                 <td width="1%">&nbsp;</td>
-                                                <td width="68%" rowspan="3" align="center">
-                                                    <p><font color="#FF0004" size="+6">公告</font><br>
+                                              <td width="68%" rowspan="3" align="center">
+                                                <p><font color="#FF0004" size="+6">公告</font><br>
                                                     <font color="#000000" size="5">五中资源网现已纯净化<br>
 推出Wallpaper（动态壁纸）子网站<br>
 “十叶”加入五中资源网制作组</font></p>
-                                                </td>
+                                                <table width="100%" border="0" cellspacing="0" cellpadding="0">
+                                                      <tbody>
+                                                        <tr>
+                                                          <td align="center" id="sss"></td>
+                                                        </tr>
+                                                      </tbody>
+                                                </table></td>
                                             </tr>
                                             <tr>
                                                 <td>&nbsp;</td>
@@ -225,5 +246,21 @@
             </tr>
         </tbody>
     </table>
+
+    <!-- 访问计数脚本（初始值设为819，字号size=2，深灰色） -->
+    <script>
+        window.onload = function() {
+            let visitCount = localStorage.getItem('pageVisitCount');
+            // 核心修改：若本地无计数，初始化为819而非0
+            if (!visitCount) {
+                visitCount = 819;
+            }
+            visitCount = parseInt(visitCount) + 1;
+            localStorage.setItem('pageVisitCount', visitCount);
+            // font标签size=2，深灰色#333333
+            const sssElement = document.getElementById('sss');
+            sssElement.innerHTML = `<font size="2" color="#333333">总访问人数：${visitCount}</font>`;
+        }
+    </script>
 </body>
 </html>
