@@ -1,0 +1,152 @@
+/* 全局样式重置 */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* 页面基础样式 */
+body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    background-color: #f0f0f0;
+    font-family: "Microsoft YaHei", sans-serif;
+    padding: 10px;
+}
+
+/* 游戏画布样式 */
+#gameCanvas {
+    border: 3px solid #333;
+    background-color: #fff;
+    max-width: 100%;
+    height: auto;
+}
+
+/* 得分样式 */
+.score {
+    font-size: 24px;
+    margin-bottom: 10px;
+    color: #333;
+    font-weight: bold;
+}
+
+/* 提示文字样式 */
+.tips {
+    font-size: 16px;
+    color: #666;
+    margin-bottom: 5px;
+    text-align: center;
+    width: 100%;
+    max-width: 400px;
+}
+
+/* 游戏结束提示样式 */
+.game-over {
+    font-size: 36px;
+    color: #e74c3c;
+    margin-top: 20px;
+    display: none;
+}
+
+/* 重新开始按钮样式 */
+.restart-btn {
+    margin-top: 20px;
+    padding: 10px 20px;
+    font-size: 18px;
+    background-color: #2ecc71;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    display: none;
+}
+
+.restart-btn:hover {
+    background-color: #27ae60;
+}
+
+/* 手机端操控控件样式 - 十字型分布 + 始终显示 + 增大间距 */
+.mobile-controls {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-top: 20px;
+    gap: 0px; 
+    width: 240px; /* 加宽容器，适配更大间距 */
+    height: 260px; /* 加高容器，适配更大间距 */
+}
+
+.control-btn {
+    width: 60px;
+    height: 60px;
+    font-size: 24px;
+    background-color: #3498db;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    outline: none;
+    transition: background-color 0.2s ease;
+}
+
+.control-btn:hover {
+    background-color: #2980b9;
+}
+
+/* 十字型布局调整：增大所有间距 */
+.control-top {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 15px; /* 上键与左右键间距增大（原8px→15px） */
+}
+
+/* ←和→之间间距增大：60px（按钮宽） + 15px（间距）= 75px → 调整为85px（更大空隙） */
+.control-middle {
+    display: flex;
+    justify-content: center;
+    gap: 85px; 
+}
+
+/* ↓键下移间距增大（原8px→15px） */
+.control-bottom {
+    display: flex;
+    justify-content: center;
+    margin-top: 15px; 
+}
+
+/* 移动端适配：同步增大间距，调整容器尺寸 */
+@media (max-width: 768px) {
+    .score {
+        font-size: 20px;
+    }
+    .game-over {
+        font-size: 28px;
+    }
+    .restart-btn {
+        font-size: 16px;
+        padding: 8px 16px;
+    }
+    .mobile-controls {
+        width: 220px;
+        height: 240px;
+    }
+    .control-btn {
+        width: 55px;
+        height: 55px;
+        font-size: 22px;
+    }
+    .control-top {
+        margin-bottom: 12px; /* 移动端上间距增大（原6px→12px） */
+    }
+    /* 移动端←→间距：55px + 12px = 67px → 调整为77px（更大空隙） */
+    .control-middle {
+        gap: 77px;
+    }
+    .control-bottom {
+        margin-top: 12px; /* 移动端下间距增大（原6px→12px） */
+    }
+}

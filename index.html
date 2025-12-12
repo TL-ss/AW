@@ -1,193 +1,111 @@
 <!doctype html>
-<html>
+<html lang="zh-CN">
 <head>
     <meta charset="utf-8">
     <title>导航页</title>
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            background: #A8A8A8;
-            width: 100vw;
-            overflow-x: hidden;
-            overflow-y: auto;
-            display: flex;
-            justify-content: center; /* 全局居中，根治偏右 */
-        }
-        /* 核心：一步到位实现100%宽度+居中+等比缩放 */
-        #app {
-            width: 1800px; /* 设计基准宽度 */
-            transform-origin: top center; /* 顶部中心缩放，保证居中 */
-            transition: transform 0.2s ease;
-        }
-        /* 侧边栏水平线居中 */
-        .sidebar-hr {
-            width: 120px;
-            margin: 0 auto;
-            border: none;
-            border-top: 2px solid #000;
-        }
-        /* 超链接样式 */
-        a {
-            display: inline-block;
-            text-decoration: none;
-            padding: 4px 8px;
-            border-radius: 4px;
-            color: #000;
-        }
-        a:hover {
-            transform: scale(1.1);
-            background: rgba(0,0,0,0.2);
-            color: #fff !important;
-        }
-        /* 图片链接样式 + 悬浮放大动画 */
-        .img-link {
-            display: block;
-            overflow: hidden;
-            border-radius: 8px; /* 可选：图片圆角 */
-            transition: transform 0.3s ease-in-out; /* 平滑放大过渡 */
-        }
-        .img-link img {
-            width: 100%;
-            height: auto;
-            display: block; /* 消除图片底部空白 */
-            transition: transform 0.3s ease-in-out;
-        }
-        .img-link:hover {
-            transform: scale(1.05); /* 容器轻微放大 */
-        }
-        .img-link:hover img {
-            transform: scale(1.1); /* 图片内部放大，营造视觉效果 */
-        }
-    </style>
+    <!-- 引入指定路径的CSS文件：css/ys.css -->
+    <link rel="stylesheet" href="css/ys.css">
 </head>
 <body>
-    <div id="app">
-        <!-- 主表格：固定设计宽度，随外层等比缩放 -->
-        <table width="1800" border="0" cellspacing="0" cellpadding="0">
-            <tbody>
-                <!-- 左侧边栏（141px = 7.83%） -->
-                <td width="141" rowspan="2" bgcolor="#5A5A5A">
-                    <table width="100%" height="935" border="0" cellpadding="0" cellspacing="0">
-                        <tr><td height="150"><img src="image/123.gif" width="100%" height="120" alt=""/></td></tr>
-                        <tr><td height="20" align="center"><hr class="sidebar-hr"></td></tr>
-                        <tr><td height="50" align="center"><a href="https://wwah.lanzout.com/iElO62z4ufeb" target="_blank"><font size="+2">极域破解</font></a></td></tr>
-                        <tr><td height="10" align="center"><hr class="sidebar-hr"></td></tr>
-                        <tr><td height="50" align="center"><a href="https://wwah.lanzout.com/iXg3j2z4ut2d" target="_blank"><font size="+2">免费VPN</font></a></td></tr>
-                        <tr><td height="10" align="center"><hr class="sidebar-hr"></td></tr>
-                        <tr>
-                            <td>
-                                <table width="100%" height="619" border="0" cellpadding="0" cellspacing="0">
-                                    <tr><td height="50" align="center"><a href="https://thehidden-wiki.org/wiki/index.php/Main_Page#Dead_Hidden_Services" target="_blank"><font size="+2">暗网导航</font></a></td></tr>
-                                    <tr><td height="10" align="center"><hr class="sidebar-hr"></td></tr>
-                                    <tr><td height="50" align="center"><a href="https://torproject.netcologne.de/zh-CN/download/languages/" target="_blank"><font size="+2">暗网浏览器</font></a></td></tr>
-                                    <tr><td height="10" align="center"><hr class="sidebar-hr"></td></tr>
-                                    <tr><td height="50" align="center"><a href="Web7.html" target="_blank"><font size="+2">近期热点</font></a></td></tr>
-                                    <tr><td height="10" align="center"><hr class="sidebar-hr"></td></tr>
-                                    <tr><td>&nbsp;</td></tr>
-                                    <tr><td height="50" align="center"><a href="Web1.html" target="_blank"><font size="+2" color="#fff">永久发布页</font></a></td></tr>
-                                </table>
-                            </td>
-                        </tr>
-                        <tr><td height="10" align="center"><hr class="sidebar-hr"></td></tr>
-                    </table>
-                </td>
+    <!-- 动画容器：包裹整个app实现自下而上淡入 -->
+    <div class="animation-container">
+        <div id="app">
+            <!-- 主表格：固定设计宽度1800px -->
+            <table width="1800" border="0" cellspacing="0" cellpadding="0">
+                <tbody>
+                    <tr>
+                        <!-- 左侧边栏（141px） -->
+                        <td width="141" rowspan="2" bgcolor="#5A5A5A">
+                            <table width="100%" height="935" border="0" cellpadding="0" cellspacing="0">
+                                <tr><td height="150"><img src="image/123.gif" width="100%" height="120" alt=""/></td></tr>
+                                <tr><td height="20" align="center"><hr class="sidebar-hr"></td></tr>
+                                <tr><td height="50" align="center"><a href="https://wwah.lanzout.com/iElO62z4ufeb" target="_blank"><font size="+2">极域破解</font></a></td></tr>
+                                <tr><td height="10" align="center"><hr class="sidebar-hr"></td></tr>
+                                <tr><td height="50" align="center"><a href="https://wwah.lanzout.com/iXg3j2z4ut2d" target="_blank"><font size="+2">免费VPN</font></a></td></tr>
+                                <tr><td height="10" align="center"><hr class="sidebar-hr"></td></tr>
+                                <tr>
+                                    <td>
+                                        <table width="100%" height="619" border="0" cellpadding="0" cellspacing="0">
+                                            <tr><td height="50" align="center"><a href="https://thehidden-wiki.org/wiki/index.php/Main_Page#Dead_Hidden_Services" target="_blank"><font size="+2">暗网导航</font></a></td></tr>
+                                            <tr><td height="10" align="center"><hr class="sidebar-hr"></td></tr>
+                                            <tr><td height="50" align="center"><a href="https://torproject.netcologne.de/zh-CN/download/languages/" target="_blank"><font size="+2">暗网浏览器</font></a></td></tr>
+                                            <tr><td height="10" align="center"><hr class="sidebar-hr"></td></tr>
+                                            <tr><td height="50" align="center"><a href="Web7.html" target="_blank"><font size="+2">近期热点</font></a></td></tr>
+                                            <tr><td height="10" align="center"><hr class="sidebar-hr"></td></tr>
+                                            <tr><td>&nbsp;</td></tr>
+                                            <tr><td height="50" align="center"><a href="Web1.html" target="_blank"><font size="+2" color="#fff">永久发布页</font></a></td></tr>
+                                        </table>
+                                    </td>
+                                </tr>
+                                <tr><td height="10" align="center"><hr class="sidebar-hr"></td></tr>
+                            </table>
+                        </td>
 
-                <!-- 右侧内容区（1660px = 92.17%） -->
-                <td width="1660" colspan="7" bgcolor="#A8A8A8">
-                    <table width="1660" border="0" cellspacing="15" cellpadding="0">
-                        <tr>
-                            <td width="1679" height="230" style="position: relative; overflow: hidden;">
-                                <!-- 公告容器 -->
-                                <div style="width: 100%; height: 100%; border: 2px solid #ccc; border-radius: 15px; overflow: hidden; position: relative;">
-                                    <!-- 左侧黑色块（33%） -->
-                                    <div style="width: 33%; height: 100%; background: #000; position: absolute; left: 0; top: 0;
-                                                display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 20px; border-radius: 13px;">
-                                        <span style="color: #fff; font-size: 36px; font-weight: 700;">五中资源网</span>
-                                        <div style="width: 140px; height: 48px; background: #082700; border-radius: 10px; display: flex; align-items: center; justify-content: center;">
-                                            <a href="web10.html" target="_blank" style="color: #000; font-size: 28px; font-weight: 700; text-decoration: none;">进入</a>
+                        <!-- 右侧内容区（1660px） -->
+                        <td width="1660" colspan="7" bgcolor="#A8A8A8">
+                            <table width="1660" border="0" cellspacing="15" cellpadding="0">
+                                <tr>
+                                    <td width="1679" height="230" style="position: relative; overflow: hidden;">
+                                        <!-- 公告容器 -->
+                                        <div class="notice-container">
+                                            <!-- 左侧黑色块（33%） -->
+                                            <div class="notice-left">
+                                                <span>五中资源网</span>
+                                                <div class="notice-btn">
+                                                    <a href="web10.html" target="_blank">进入</a>
+                                                </div>
+                                            </div>
+                                            <!-- 右侧公告区（67%） -->
+                                            <div class="notice-right">
+                                                <span class="notice-title">公告</span>
+                                                <div class="notice-content">
+                                                    修复访问次数卡死在820的bug（调用TinyAPI）<br>
+                                                    为首页添加了自适应浏览器窗口的效果，并优化超链接交互性<br>
+                                                    正式决定在两周后制作手机端独立网页显示
+                                                </div>
+                                                <div id="sss" class="notice-count">总访问次数：加载中...</div>
+                                            </div>
                                         </div>
-                                    </div>
-                                    <!-- 右侧公告区（67%） -->
-                                    <div style="width: 67%; height: 100%; margin-left: 33%; padding: 0 15px; 
-                                                display: flex; flex-direction: column; align-items: center; justify-content: center;
-                                                border: 2px solid #000; border-left: none; border-radius: 0 13px 13px 0; background: #f9f9f9; position: relative; left: -2px;">
-                                        <span style="color: #f00; font-size: 42px; font-weight: 800; margin-bottom: 5px;">公告</span>
-                                        <div style="color: #000; font-size: 19px; line-height: 1.3; text-align: center; margin-bottom: 8px;">修复访问次数卡死在820的bug（调用<a href="https://www.busuanzi.cc/" target="_blank"><font color="#4865D3">不蒜子</font></a>计数）<br>
-为首页添加了自适应浏览器窗口的效果，并优化超链接交互性<br>
-正式决定在两周后制作手机端独立网页显示</div>
-                                        <div id="sss" style="color: #333; font-size: 15px; text-align: center;">总访问次数：加载中...</div>
-                                    </div>
-                                </div>
-                            </td>
-                        </tr>
-                    </table>
-                </td>
-            </tr>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
 
-            <!-- 图片区 -->
-            <tr>
-                <td colspan="7">
-                    <table width="100%" border="0" cellspacing="7.5" cellpadding="7.5">
-                        <tr>
-                            <!-- 为图片链接添加 img-link 类 -->
-                            <td width="33.5%"><a href="Web2.html" target="_blank" class="img-link"><img src="image/未标题-5.png" alt=""/></a></td>
-                            <td width="33.5%"><a href="Web3.html" target="_blank" class="img-link"><img src="image/gal.png" alt=""/></a></td>
-                            <td width="33.5%"><a href="Web4.html" target="_blank" class="img-link"><img src="image/steam.png" alt=""/></a></td>
-                        </tr>
-                        <tr>
-                            <td><a href="Web5.html" target="_blank" class="img-link"><img src="image/未标题-1.png" alt=""/></a></td>
-                            <td><a href="https://tl-ss.github.io/wallpaper" target="_blank" class="img-link"><img src="image/bz.png" alt=""/></a></td>
-                            <td><a href="Web6.html" target="_blank" class="img-link"><img src="image/dm.png" alt=""/></a></td>
-                        </tr>
-                    </table>
-                </td>
-            </tr>
+                    <!-- 图片区 -->
+                    <tr>
+                        <td colspan="7">
+                            <table width="100%" border="0" cellspacing="7.5" cellpadding="7.5">
+                                <tr>
+                                    <td width="33.5%"><a href="Web2.html" target="_blank" class="img-link"><img src="image/未标题-5.png" alt=""/></a></td>
+                                    <td width="33.5%"><a href="Web3.html" target="_blank" class="img-link"><img src="image/gal.png" alt=""/></a></td>
+                                    <td width="33.5%"><a href="Web4.html" target="_blank" class="img-link"><img src="image/steam.png" alt=""/></a></td>
+                                </tr>
+                                <tr>
+                                    <td><a href="Web5.html" target="_blank" class="img-link"><img src="image/未标题-1.png" alt=""/></a></td>
+                                    <td><a href="https://tl-ss.github.io/wallpaper" target="_blank" class="img-link"><img src="image/bz.png" alt=""/></a></td>
+                                    <td><a href="Web6.html" target="_blank" class="img-link"><img src="image/dm.png" alt=""/></a></td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
 
-            <!-- 底部版权 -->
-            <tr>
-                <td colspan="8" bgcolor="#2A2A2A" align="center" style="padding: 20px 0;">
-                    <font color="#B1B1B1" size="+2">版权所有©Timeless</font><br>
-                    <font color="#B1B1B1" size="+2">公安备案号：上哪给你屙备案号去？</font><br>
-                    <font color="#B1B1B1" size="+2">赞助商：没有</font><br>
-                    <font color="#B1B1B1" size="+2">制作组：Timeless&十叶</font><br>
-                    <font color="#B1B1B1" size="+1" style="margin-top: 10px; display: block;">2025.10.1/01:09</font>
-                </td>
-            </tr>
-        </table>
+                    <!-- 底部版权 -->
+                    <tr>
+                        <td colspan="8" class="copyright" align="center">
+                            <font color="#B1B1B1" size="+2">版权所有©Timeless</font><br>
+                            <font color="#B1B1B1" size="+2">公安备案号：上哪给你屙备案号去？</font><br>
+                            <font color="#B1B1B1" size="+2">赞助商：没有</font><br>
+                            <font color="#B1B1B1" size="+2">制作组：Timeless&十叶</font><br>
+                            <font color="#B1B1B1" size="+1" class="copyright-time">2025.10.1/01:09</font>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
     </div>
 
-    <script>
-        // 1. 访问计数（不蒜子）
-        (function() {
-            let bs = document.createElement('script');
-            bs.src = '//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js';
-            bs.charset = 'utf-8';
-            bs.async = true;
-            document.head.appendChild(bs);
-            // 计数渲染
-            setTimeout(() => {
-                if (window.busuanzi) {
-                    let count = parseInt(busuanzi.site_pv) + 819;
-                    document.getElementById('sss').innerText = `总访问次数：${count}`;
-                }
-            }, 1000);
-        })();
-
-        // 2. 核心：100%宽度+居中+等比缩放（修复偏右）
-        function scaleApp() {
-            let app = document.getElementById('app');
-            const viewportWidth = window.innerWidth;
-            const baseWidth = 1800;
-            // 计算缩放比例，最大不超过1（防止超大）
-            let scale = Math.min(1, viewportWidth / baseWidth);
-            // 关键修复：transform-origin + 纯缩放，配合body的flex居中
-            app.style.transform = `scale(${scale})`;
-            app.style.width = `${baseWidth}px`;
-        }
-
-        // 初始化+监听窗口变化
-        scaleApp();
-        window.addEventListener('resize', scaleApp);
-    </script>
+    <!-- 引入指定路径的JS文件：JavaScript/tls.js -->
+    <script src="JavaScript/tls.js"></script>
 </body>
 </html>
