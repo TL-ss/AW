@@ -1,38 +1,43 @@
-// ========== 功能1：访问次数统计（仅依赖TinyAPI，失败显示加载失败） ==========
+// ========== 功能1：访问次数统计（替换为CounterDev API，稳定无跨域） ==========
 (function() {
     const countElement = document.getElementById('sss');
     if (!countElement) return;
 
-    // 替换为你的唯一标识（确保全网唯一）
-    const COUNT_ID = 'github-timeless-wuzhong-resource';
-    // 添加随机参数避免浏览器缓存，提升计数准确性
-    const API_URL = `https://tinyapi.cn/apis/count/${COUNT_ID}?t=${Date.now()}`;
+    // 【关键】替换为你的唯一标识（格式：任意字符串，建议github-用户名-项目名）
+    // 示例：const COUNTER_ID = 'github-timeless-wuzhong-resource';
+    const COUNTER_ID = 'github-timeless-wuzhong-resource';
+    // CounterDev 官方API（稳定、无跨域、无需注册）
+    const API_URL = `https://api.countapi.xyz/hit/${COUNTER_ID}/visits`;
 
     // 初始化显示加载状态
     countElement.innerText = '总访问次数：加载中...';
 
-    // 发起计数请求
-    fetch(API_URL, { method: 'GET' })
-        .then(res => {
-            if (!res.ok) throw new Error(`HTTP错误：${res.status}`);
-            return res.json();
-        })
-        .then(data => {
-            if (data.code === 200 && typeof data.data === 'number') {
-                // 直接使用API返回的累计计数（从0开始）
-                countElement.innerText = `总访问次数：${data.data}`;
-            } else {
-                throw new Error(`数据异常：${JSON.stringify(data)}`);
-            }
-        })
-        .catch(err => {
-            console.error('计数请求失败：', err);
-            // API失败时显示加载失败，不再使用本地存储兜底
-            countElement.innerText = '总访问次数：加载失败';
-        });
+    // 发起计数请求（处理跨域，兼容所有浏览器）
+    fetch(API_URL, {
+        method: 'GET',
+        mode: 'cors', // 明确开启跨域
+        cache: 'no-cache' // 禁用缓存，确保计数准确
+    })
+    .then(res => {
+        if (!res.ok) throw new Error(`请求失败：${res.status}`);
+        return res.json();
+    })
+    .then(data => {
+        // CounterDev 返回格式：{ value: 累计计数 }
+        if (typeof data.value === 'number') {
+            countElement.innerText = `总访问次数：${data.value}`;
+        } else {
+            throw new Error(`数据格式异常：${JSON.stringify(data)}`);
+        }
+    })
+    .catch(err => {
+        console.error('计数API请求失败：', err);
+        // 失败时显示加载失败
+        countElement.innerText = '总访问次数：加载失败';
+    });
 })();
 
-// ========== 功能2：PC端等比缩放（修复偏右问题） ==========
+// ========== 功能2：PC端等比缩放（保留原有逻辑，无修改） ==========
 function scaleApp() {
     const app = document.getElementById('app');
     const animationContainer = document.querySelector('.animation-container');
