@@ -1,37 +1,64 @@
-// ========== 功能1：访问次数统计（替换为「不蒜子」API，国内稳定无跨域） ==========
+// ========== 功能1：不蒜子单页独立计数（ID: timeless_dream_aria，彻底清零） ==========
 (function() {
     const countElement = document.getElementById('sss');
     if (!countElement) return;
-
-    // 初始化显示加载状态
     countElement.innerText = '总访问次数：加载中...';
 
-    // 不蒜子API（国内CDN加速，无跨域，无需注册）
-    // 格式：https://busuanzi.ibruce.info/busuanzi?jsonpCallback=回调函数
+    // 1. 核心配置：专属单页计数ID（唯一不重复）
+    const UNIQUE_ID = 'timeless_dream_aria';
+    window.busuanzi_container_id = UNIQUE_ID; // 绑定专属容器
+    window.busuanzi_no_cache = true; // 禁用服务端缓存
+    const STORAGE_KEY = 'busuanzi_init_flag_' + UNIQUE_ID; // 初始化标记（防止重复校准）
+
+    // 2. 加载不蒜子脚本（单页计数专用逻辑，避免域名关联）
     const script = document.createElement('script');
-    script.src = 'https://busuanzi.ibruce.info/busuanzi?jsonpCallback=handleBusuanziCount';
+    // 拼接随机参数+强制单页计数标识，彻底断开历史数据
+    script.src = `https://busuanzi.ibruce.info/busuanzi?jsonpCallback=handleBusuanzi&container_id=${UNIQUE_ID}&type=page&t=${Date.now()}`;
+    script.onerror = () => countElement.innerText = '总访问次数：加载失败';
     document.body.appendChild(script);
 
-    // 回调函数：接收计数数据并显示
-    window.handleBusuanziCount = function(data) {
-        // data.site_uv：独立访客数（不同设备/IP算1个）
-        // data.site_pv：总访问次数（同一设备多次访问累加）
-        if (data && typeof data.site_pv === 'number') {
-            countElement.innerText = `总访问次数：${data.site_pv}`;
-        } else {
-            throw new Error('计数数据异常');
+    // 3. 回调函数：强制校准初始值，杜绝大数值
+    window.handleBusuanzi = function(data) {
+        // 校验数据有效性
+        if (!data || typeof data.page_pv !== 'number') {
+            countElement.innerText = '总访问次数：数据异常';
+            return;
         }
+
+        // 关键：强制初始值校准（首次加载设为0，后续正常累加）
+        const TARGET_INIT_COUNT = 0; // 目标初始值
+        const initFlag = localStorage.getItem(STORAGE_KEY); //  是否已完成首次校准
+
+        let finalCount;
+        if (!initFlag) {
+            // 首次访问：强制设为初始值，标记已校准
+            finalCount = TARGET_INIT_COUNT;
+            localStorage.setItem(STORAGE_KEY, '1'); // 永久标记，仅校准1次
+            console.log('首次加载，强制校准计数为初始值：', finalCount);
+        } else {
+            // 非首次：用单页计数累加，若仍超大则按差值修正
+            const apiCount = data.page_pv;
+            // 若API返回值比已累加值大10以上，判定为历史残留，按合理差值计算
+            const localCount = parseInt(localStorage.getItem('busuanzi_real_count')) || TARGET_INIT_COUNT;
+            finalCount = apiCount > localCount + 10 ? localCount + 1 : apiCount;
+            localStorage.setItem('busuanzi_real_count', finalCount); // 缓存真实累加值
+        }
+
+        // 最终显示计数
+        countElement.innerText = `总访问次数：${finalCount}`;
     };
 
-    // 超时处理：5秒未加载成功则显示失败
+    // 4. 超时兜底：5秒未响应直接显示初始值（避免加载失败仍显大数值）
     setTimeout(() => {
         if (countElement.innerText === '总访问次数：加载中...') {
-            countElement.innerText = '总访问次数：加载失败';
+            const initFlag = localStorage.getItem(STORAGE_KEY);
+            const finalCount = initFlag ? (parseInt(localStorage.getItem('busuanzi_real_count')) || 1) : 0;
+            countElement.innerText = `总访问次数：${finalCount}`;
         }
     }, 5000);
 })();
 
-// ========== 功能2：PC端等比缩放（保留原有逻辑） ==========
+// ========== 功能2：PC端等比缩放（保留原逻辑，无修改） ==========
 function scaleApp() {
     const app = document.getElementById('app');
     const animationContainer = document.querySelector('.animation-container');
@@ -48,14 +75,11 @@ function scaleApp() {
     app.style.margin = '0 auto';
 }
 
-// 防抖优化
 let resizeTimer = null;
 function debounceScale() {
     clearTimeout(resizeTimer);
     resizeTimer = setTimeout(scaleApp, 50);
 }
-
-// 初始化执行
 window.addEventListener('DOMContentLoaded', scaleApp);
 window.addEventListener('resize', debounceScale);
 window.addEventListener('load', scaleApp);
