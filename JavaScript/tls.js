@@ -1,43 +1,37 @@
-// ========== 功能1：访问次数统计（替换为CounterDev API，稳定无跨域） ==========
+// ========== 功能1：访问次数统计（替换为「不蒜子」API，国内稳定无跨域） ==========
 (function() {
     const countElement = document.getElementById('sss');
     if (!countElement) return;
 
-    // 【关键】替换为你的唯一标识（格式：任意字符串，建议github-用户名-项目名）
-    // 示例：const COUNTER_ID = 'github-timeless-wuzhong-resource';
-    const COUNTER_ID = 'github-timeless-wuzhong-resource';
-    // CounterDev 官方API（稳定、无跨域、无需注册）
-    const API_URL = `https://api.countapi.xyz/hit/${COUNTER_ID}/visits`;
-
     // 初始化显示加载状态
     countElement.innerText = '总访问次数：加载中...';
 
-    // 发起计数请求（处理跨域，兼容所有浏览器）
-    fetch(API_URL, {
-        method: 'GET',
-        mode: 'cors', // 明确开启跨域
-        cache: 'no-cache' // 禁用缓存，确保计数准确
-    })
-    .then(res => {
-        if (!res.ok) throw new Error(`请求失败：${res.status}`);
-        return res.json();
-    })
-    .then(data => {
-        // CounterDev 返回格式：{ value: 累计计数 }
-        if (typeof data.value === 'number') {
-            countElement.innerText = `总访问次数：${data.value}`;
+    // 不蒜子API（国内CDN加速，无跨域，无需注册）
+    // 格式：https://busuanzi.ibruce.info/busuanzi?jsonpCallback=回调函数
+    const script = document.createElement('script');
+    script.src = 'https://busuanzi.ibruce.info/busuanzi?jsonpCallback=handleBusuanziCount';
+    document.body.appendChild(script);
+
+    // 回调函数：接收计数数据并显示
+    window.handleBusuanziCount = function(data) {
+        // data.site_uv：独立访客数（不同设备/IP算1个）
+        // data.site_pv：总访问次数（同一设备多次访问累加）
+        if (data && typeof data.site_pv === 'number') {
+            countElement.innerText = `总访问次数：${data.site_pv}`;
         } else {
-            throw new Error(`数据格式异常：${JSON.stringify(data)}`);
+            throw new Error('计数数据异常');
         }
-    })
-    .catch(err => {
-        console.error('计数API请求失败：', err);
-        // 失败时显示加载失败
-        countElement.innerText = '总访问次数：加载失败';
-    });
+    };
+
+    // 超时处理：5秒未加载成功则显示失败
+    setTimeout(() => {
+        if (countElement.innerText === '总访问次数：加载中...') {
+            countElement.innerText = '总访问次数：加载失败';
+        }
+    }, 5000);
 })();
 
-// ========== 功能2：PC端等比缩放（保留原有逻辑，无修改） ==========
+// ========== 功能2：PC端等比缩放（保留原有逻辑） ==========
 function scaleApp() {
     const app = document.getElementById('app');
     const animationContainer = document.querySelector('.animation-container');
