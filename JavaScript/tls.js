@@ -1,30 +1,34 @@
-// ========== 功能1：访问次数统计（TinyAPI + 本地存储兜底） ==========
+// ========== 功能1：访问次数统计（仅依赖TinyAPI，失败显示加载失败） ==========
 (function() {
     const countElement = document.getElementById('sss');
     if (!countElement) return;
 
-    // 替换为你的唯一标识（避免重复）
+    // 替换为你的唯一标识（确保全网唯一）
     const COUNT_ID = 'github-timeless-wuzhong-resource';
-    const API_URL = `https://tinyapi.cn/apis/count/${COUNT_ID}`;
+    // 添加随机参数避免浏览器缓存，提升计数准确性
+    const API_URL = `https://tinyapi.cn/apis/count/${COUNT_ID}?t=${Date.now()}`;
+
+    // 初始化显示加载状态
+    countElement.innerText = '总访问次数：加载中...';
 
     // 发起计数请求
     fetch(API_URL, { method: 'GET' })
-        .then(res => res.json())
+        .then(res => {
+            if (!res.ok) throw new Error(`HTTP错误：${res.status}`);
+            return res.json();
+        })
         .then(data => {
             if (data.code === 200 && typeof data.data === 'number') {
-                const totalCount = data.data + 819;
-                countElement.innerText = `总访问次数：${totalCount}`;
+                // 直接使用API返回的累计计数（从0开始）
+                countElement.innerText = `总访问次数：${data.data}`;
             } else {
-                throw new Error('计数数据异常');
+                throw new Error(`数据异常：${JSON.stringify(data)}`);
             }
         })
         .catch(err => {
-            console.log('计数API失败，降级到本地存储：', err);
-            const STORAGE_KEY = 'static_site_count';
-            let localCount = parseInt(localStorage.getItem(STORAGE_KEY)) || 820;
-            localCount += 1;
-            localStorage.setItem(STORAGE_KEY, localCount);
-            countElement.innerText = `总访问次数：${localCount}`;
+            console.error('计数请求失败：', err);
+            // API失败时显示加载失败，不再使用本地存储兜底
+            countElement.innerText = '总访问次数：加载失败';
         });
 })();
 
@@ -35,11 +39,9 @@ function scaleApp() {
     if (!app || !animationContainer) return;
 
     const baseWidth = 1800;
-    // 仅基于PC端容器宽度计算缩放比例
     const containerWidth = animationContainer.clientWidth;
     const scale = Math.min(1, containerWidth / baseWidth);
 
-    // 强制居中，消除偏右
     app.style.transform = `scale(${scale})`;
     app.style.transformOrigin = 'top center';
     app.style.width = `${baseWidth}px`;
@@ -47,14 +49,14 @@ function scaleApp() {
     app.style.margin = '0 auto';
 }
 
-// 防抖优化：避免频繁缩放
+// 防抖优化
 let resizeTimer = null;
 function debounceScale() {
     clearTimeout(resizeTimer);
     resizeTimer = setTimeout(scaleApp, 50);
 }
 
-// 初始化执行（仅PC端）
+// 初始化执行
 window.addEventListener('DOMContentLoaded', scaleApp);
 window.addEventListener('resize', debounceScale);
 window.addEventListener('load', scaleApp);
