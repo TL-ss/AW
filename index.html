@@ -1,116 +1,40 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <meta charset="utf-8">
-	<meta name="description" content="首页">
-    <title>五中资源网</title>
-    <!-- 引入指定路径的CSS文件：css/ys.css -->
-    <link rel="stylesheet" href="css/ys.css">
+    <meta charset="UTF-8">
+	<meta name="description" content="UA判定">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>自动跳转</title>
 </head>
 <body>
-    <!-- 动画容器：包裹整个app实现自下而上淡入 -->
-    <div class="animation-container">
-        <div id="app">
-            <!-- 主表格：固定设计宽度1800px -->
-            <table width="1800" border="0" cellspacing="0" cellpadding="0">
-                <tbody>
-                    <tr>
-                        <!-- 左侧边栏（141px） -->
-                        <td width="141" rowspan="2" bgcolor="#5A5A5A">
-                            <table width="100%" height="935" border="0" cellpadding="0" cellspacing="0">
-                                <tr><td height="150"><img src="image/123.gif" width="100%" height="120" alt=""/></td></tr>
-                                <tr><td height="20" align="center"><hr class="sidebar-hr"></td></tr>
-                                <tr><td height="50" align="center"><a href="https://wwah.lanzout.com/iElO62z4ufeb" target="_blank"><font size="+2">极域破解</font></a></td></tr>
-                                <tr><td height="10" align="center"><hr class="sidebar-hr"></td></tr>
-                                <tr><td height="50" align="center"><a href="https://wwah.lanzout.com/iXg3j2z4ut2d" target="_blank"><font size="+2">免费VPN</font></a></td></tr>
-                                <tr><td height="10" align="center"><hr class="sidebar-hr"></td></tr>
-                                <tr>
-                                    <td>
-                                        <table width="100%" height="619" border="0" cellpadding="0" cellspacing="0">
-                                            <tr><td height="50" align="center"><a href="https://thehidden-wiki.org/wiki/index.php/Main_Page#Dead_Hidden_Services" target="_blank"><font size="+2">暗网导航</font></a></td></tr>
-                                            <tr><td height="10" align="center"><hr class="sidebar-hr"></td></tr>
-                                            <tr><td height="50" align="center"><a href="https://torproject.netcologne.de/zh-CN/download/languages/" target="_blank"><font size="+2">暗网浏览器</font></a></td></tr>
-                                            <tr><td height="10" align="center"><hr class="sidebar-hr"></td></tr>
-                                            <tr><td height="50" align="center"><a href="Web7.html" target="_blank"><font size="+2">近期热点</font></a></td></tr>
-                                            <tr><td height="10" align="center"><hr class="sidebar-hr"></td></tr>
-                                            <tr><td height="50" align="center"><a href="tcs.html" target="_blank"><font size="+2">小游戏</font></a></td></tr>
-                                            <tr><td height="10" align="center"><hr class="sidebar-hr"></td></tr>
-                                            <tr>
-                                              <td>&nbsp;</td>
-                                            </tr>
-                                            <tr><td height="50" align="center"><a href="Web1.html" target="_blank"><font size="+2" color="#fff">永久发布页</font></a></td></tr>
-                                        </table>
-                                    </td>
-                                </tr>
-                                <tr><td height="10" align="center"><hr class="sidebar-hr"></td></tr>
-                            </table>
-                        </td>
+    <script>
+        // 优化：增强版User-Agent正则，覆盖更多移动端设备（解决大部分识别失败问题）
+        function isMobileDevice() {
+            const navigatorObj = navigator || {};
+            const userAgent = (navigatorObj.userAgent || '').toLowerCase();
+            // 新增更多移动设备关键字，且转为小写匹配（避免大小写问题导致识别失败）
+            const mobileKeywords = [
+                'android', 'iphone', 'ipod', 'ipad',
+                'webos', 'blackberry', 'iemobile',
+                'opera mini', 'mobile', 'symbian',
+                'windows phone'
+            ];
+            // 遍历关键字匹配，提升识别精准度
+            return mobileKeywords.some(keyword => userAgent.includes(keyword));
+        }
 
-                        <!-- 右侧内容区（1660px） -->
-                        <td width="1660" colspan="7" bgcolor="#A8A8A8">
-                            <table width="1660" border="0" cellspacing="15" cellpadding="0">
-                                <tr>
-                                    <td width="1679" height="230" style="position: relative; overflow: hidden;">
-                                        <!-- 公告容器 -->
-                                        <div class="notice-container">
-                                            <!-- 左侧黑色块（33%） -->
-                                            <div class="notice-left">
-                                                <span>五中资源网</span>
-                                                <div class="notice-btn">
-                                                    <a href="web10.html" target="_blank">进入</a>
-                                                </div>
-                                            </div>
-                                            <!-- 右侧公告区（67%） -->
-                                            <div class="notice-right">
-                                                <span class="notice-title">公告</span>
-                                                <div class="notice-content">
-                                                    修复访问次数卡死在820的bug(接入<a href="https://www.busuanzi.cc/" target="_blank"><font color="#0284FD">不蒜子</font></a>(据说有20~30分钟的延迟？))<br>
-                                                    为首页添加了自适应浏览器窗口的效果，并优化超链接交互性<br>
-                                                    正式决定在两周后制作手机端独立网页显示
-                                                </div>
-                                                <div id="sss" class="notice-count">总访问次数：加载中...</div>
-                                            </div>
-                                        </div>
-                                    </td>
-                                </tr>
-                            </table>
-                        </td>
-                    </tr>
-
-                    <!-- 图片区 -->
-                    <tr>
-                        <td colspan="7">
-                            <table width="100%" border="0" cellspacing="7.5" cellpadding="7.5">
-                                <tr>
-                                    <td width="33.5%"><a href="Web2.html" target="_blank" class="img-link"><img src="image/未标题-5.png" alt=""/></a></td>
-                                    <td width="33.5%"><a href="Web3.html" target="_blank" class="img-link"><img src="image/gal.png" alt=""/></a></td>
-                                    <td width="33.5%"><a href="Web4.html" target="_blank" class="img-link"><img src="image/steam.png" alt=""/></a></td>
-                                </tr>
-                                <tr>
-                                    <td><a href="Web5.html" target="_blank" class="img-link"><img src="image/未标题-1.png" alt=""/></a></td>
-                                    <td><a href="https://tl-ss.github.io/wallpaper" target="_blank" class="img-link"><img src="image/bz.png" alt=""/></a></td>
-                                    <td><a href="Web6.html" target="_blank" class="img-link"><img src="image/dm.png" alt=""/></a></td>
-                                </tr>
-                            </table>
-                        </td>
-                    </tr>
-
-                    <!-- 底部版权 -->
-                    <tr>
-                        <td colspan="8" class="copyright" align="center">
-                            <font color="#B1B1B1" size="+2">版权所有©Timeless</font><br>
-                            <font color="#B1B1B1" size="+2">公安备案号：上哪给你屙备案号去？</font><br>
-                            <font color="#B1B1B1" size="+2">赞助商：没有</font><br>
-                            <font color="#B1B1B1" size="+2">制作组：Timeless&十叶</font><br>
-                            <font color="#B1B1B1" size="+1" class="copyright-time">2025.10.1/01:09</font>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
-
-    <!-- 引入指定路径的JS文件：JavaScript/tls.js -->
-    <script src="JavaScript/tls.js"></script>
+        // 无提示即时跳转（新增容错，确保跳转逻辑执行）
+        (function redirectImmediately() {
+            // 明确变量接收判断结果，方便调试
+            const isMobile = isMobileDevice();
+            
+            // 核心跳转：使用 location.replace() 替代 href，避免返回中间页，且跳转更稳定
+            if (isMobile) {
+                window.location.replace("indexAD.html"); // 手机端跳转
+            } else {
+                window.location.replace("index1.html"); // 电脑端跳转
+            }
+        })();
+    </script>
 </body>
 </html>

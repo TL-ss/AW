@@ -1,0 +1,279 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="description" content="AU首页">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>五中资源网</title>
+<style type="text/css">
+/* 保留原有所有 CSS 样式，仅添加 SVG 样式 */
+svg {
+  width: 100%; /* SVG 占满窗口宽度，实现缩放 */
+  max-width: 1000px; /* 限制最大宽度，避免超大窗口布局变形 */
+  margin: 20px auto;
+  display: block; /* 居中对齐，去除 SVG 默认行内元素间隙 */
+}
+
+/* 父级DIV：包裹所有元素，核心修改 - 宽度设为 100% */
+.parent-container {
+  width: 100%; /* 满足要求：父级DIV宽度改为 100%（不再是固定 1000px） */
+  margin: 20px auto;
+  border: 2px solid #333333;
+  border-radius: 12px;
+  background-color: #ffffff;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  overflow: hidden;
+  transform-origin: top center;
+}
+
+/* 头部横幅：优化质感、间距和视觉冲击力 */
+.banner {
+	height: 200px;
+	background: linear-gradient(135deg, #000000, #2c2c2c);
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	position: relative;
+}
+
+/* 横幅轻微光效，提升高级感 */
+.banner::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background: linear-gradient(90deg, #ff4444, #ff6b6b, #ff4444);
+}
+
+.bannerzt {
+  color: #ffffff;
+  font-weight: 700;
+  font-size: 85px;
+  margin: 0;
+  letter-spacing: 4px;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+/* 公告区域：优化间距、圆角和背景质感 */
+.notice-wrapper {
+  padding: 0 5%;
+  margin: 10px 0;
+}
+
+.notice-container {
+  margin: 30px 0 40px 0;
+  height: 150px;
+  background-color: #f5f5f5;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.notice-title {
+  color: #ff3333;
+  font-size: 28px;
+  margin: 0 0 12px 0;
+  font-weight: 600;
+  letter-spacing: 1px;
+}
+
+.notice-content {
+  color: #333333;
+  font-size: 16px;
+  margin: 0;
+  line-height: 1.6;
+  max-width: 80%;
+}
+
+/* 图片区域：优化背景、间距和图片容器质感 */
+.image-wrapper {
+  padding: 0 5%;
+  margin-bottom: 20px;
+}
+
+.image-container {
+	background-color: #A0A0A0;
+	border: 1px solid #eaeaea;
+	border-radius: 8px;
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+	gap: 36px;
+	padding: 24px 0;
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.tablegg {
+  width: 418px;
+  height: 120px;
+  border-radius: 6px;
+  overflow: hidden;
+  border: 1px solid #e0e0e0;
+  transition: all 0.3s ease;
+}
+
+/* 图片hover交互 */
+.tablegg:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+  border-color: #ff6b6b;
+}
+
+.tablegg img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  background-color: #ffffff;
+  transition: all 0.3s ease;
+}
+
+.tablegg:hover img {
+  opacity: 0.95;
+}
+
+/* 版权区域：优化背景、间距和文字排版 */
+.copyright {
+	height: 220px;
+	background: linear-gradient(135deg, #2a2a2a, #1a1a1a);
+	border-top: 2px solid #ff3333;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	text-align: center;
+	color: #e0e0e0;
+}
+
+.copyright p {
+  font-size: 20px;
+  margin: 8px 0;
+  letter-spacing: 0.5px;
+  font-weight: 400;
+}
+
+/* 版权时间样式优化 */
+.copyright .copyright-time {
+  font-size: 16px;
+  margin-top: 16px;
+  color: #999999;
+  letter-spacing: 1px;
+}
+
+/* 页面body：优化背景、字体和全局样式 */
+body {
+  background-color: #f0f2f5;
+  margin: 0;
+  padding: 0;
+  font-family: "Microsoft YaHei", "Arial", sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+
+/* ========== 新增：自下而上淡入动画核心样式 ========== */
+/* 1. 定义@keyframes动画规则，实现自下而上+淡入效果 */
+@keyframes fadeInUp {
+  /* 动画起始状态：下方偏移、完全透明 */
+  0% {
+    opacity: 0; /* 完全透明 */
+    transform: translateY(50px); /* 向下偏移50px（自下而上的核心） */
+  }
+  /* 动画结束状态：恢复原位、完全不透明 */
+  100% {
+    opacity: 1; /* 完全显示 */
+    transform: translateY(0); /* 回到原始位置 */
+  }
+}
+
+/* 2. 为所有需要动画的元素添加动画样式（统一类名，方便复用） */
+.animate-fadeInUp {
+  animation: fadeInUp 0.8s ease-out forwards; /* 调用动画，持续0.8秒，缓出效果 */
+  opacity: 0; /* 初始状态透明，避免动画前闪烁 */
+}
+
+/* 3. 可选：为不同元素设置动画延迟，实现阶梯式入场（更美观） */
+.banner {
+  animation-delay: 0.1s;
+}
+.notice-container {
+  animation-delay: 0.3s;
+}
+.image-container {
+  animation-delay: 0.5s;
+}
+.copyright {
+  animation-delay: 0.7s;
+}
+/* 为所有图片卡片添加延迟，实现逐个入场 */
+.tablegg {
+  animation: fadeInUp 0.6s ease-out forwards;
+  opacity: 0;
+}
+.tablegg:nth-child(odd) {
+  animation-delay: 0.6s;
+}
+.tablegg:nth-child(even) {
+  animation-delay: 0.8s;
+}
+</style>
+</head>
+
+<body>
+<!-- SVG 包裹整个网页内容，viewBox 适配父级DIV 100%宽度，高度2000足够容纳所有内容 -->
+<svg viewBox="0 0 1000 2000" xmlns="http://www.w3.org/2000/svg">
+  <foreignObject width="1000" height="2000">
+    <div xmlns="http://www.w3.org/1999/xhtml" class="parent-container">
+      <!-- 头部横幅区域：添加动画类名 -->
+      <div class="banner animate-fadeInUp">
+        <h1 class="bannerzt">五 中 资 源 网</h1>
+      </div>
+
+      <!-- 公告区域：添加动画类名 -->
+      <div class="notice-wrapper">
+        <div class="notice-container animate-fadeInUp">
+          <div class="notice-title">公告</div>
+          <div class="notice-content">
+            手机端显示已正式推出，目前处于测试阶段，我在职教楼的每个机房的12号<br>
+            机D盘中，都放了一个文本文档（.txt文件），如有不足请在文本文档中留言。
+          </div>
+        </div>
+      </div>
+
+      <!-- 图片展示区域：添加动画类名 -->
+      <div class="image-wrapper">
+        <div class="image-container animate-fadeInUp">
+          <div class="tablegg"><a href="https://tl-ss.github.io/wallpaper" target="_blank"><img src="image/bzAD.png" alt="资源图片1"/></a></div>
+          <div class="tablegg"><a href="Web4.html" target="_blank"><img src="image/steamAD.png" alt="资源图片2"/></a></div>
+          <div class="tablegg"><a href="Web2.html" target="_blank"><img src="image/Github.png" alt="资源图片3"/></a></div>
+          <div class="tablegg"><a href="Web5.html" target="_blank"><img src="image/software.png" alt="资源图片4"/></a></div>
+          <div class="tablegg"><a href="Web3.html" target="_blank"><img src="image/galAD.png" alt="资源图片5"/></a></div>
+          <div class="tablegg"><a href="Web6.html" target="_blank"><img src="image/dmAD.png" alt="资源图片6"/></a></div>
+          <div class="tablegg"><a href="https://wwah.lanzout.com/iElO62z4ufeb" target="_blank"><img src="image/jypj.png" alt="资源图片7"/></a></div>
+          <div class="tablegg"><a href="https://thehidden-wiki.org/wiki/index.php/Main_Page#Dead_Hidden_Services" target="_blank"><img src="image/AWDH.png" alt="资源图片8"/></a></div>
+          <div class="tablegg"><a href="https://wwah.lanzout.com/iXg3j2z4ut2d" target="_blank"><img src="image/VPN.png" alt="资源图片9"/></a></div>
+          <div class="tablegg"><a href="https://torproject.netcologne.de/zh-CN/download/languages/" target="_blank"><img src="image/AWWEB.png" alt="资源图片10"/></a></div>
+          <div class="tablegg"><a href="tcs.html" target="_blank"><img src="image/littlegame.png" alt="资源图片11"/></a></div>
+          <div class="tablegg"><a href="Web7.html" target="_blank"><img src="image/RD.png" alt="资源图片12"/></a></div>
+        </div>
+      </div>
+
+      <!-- 版权声明区域：添加动画类名 -->
+      <div class="copyright animate-fadeInUp">
+        <p>版权所有©Timeless</p>
+        <p>公安备案号：上哪给你屙备案号去？</p>
+        <p>赞助商：没有</p>
+        <p>制作组：TimelessWEB</p>
+        <span class="copyright-time">2026.1.1/20:59</span>
+      </div>
+    </div>
+  </foreignObject>
+</svg>
+</body>
+</html>
