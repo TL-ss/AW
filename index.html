@@ -1,40 +1,102 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="zh-CN">
 <head>
-    <meta charset="UTF-8">
-	<meta name="description" content="UA判定">
+    <meta charset="utf-8">
+	<meta name="description" content="五中资源网提供各种软件及工具的下载。其中还包括能让机房课体验翻倍的工具和脚本。五中资源网由Timeless独立制作，并且在Github上完全开源，你可以在这里找到全世界所有的GAlgame和6000+的Steam单机游戏。五中资源网--一个属于五中学生的网站">
+	<meta name="Keywords" content="极域破解，Steam单机游戏，免费动漫，实用软件，脚本工具，免费梯子，Galgame。">
+    <title>五中资源网</title>
+    <!-- 就是这一行！标题栏图标，在title标签位置，网页内不显示任何图片 -->
+    <link rel="shortcut icon" href="image/index.png" type="image/x-icon">
+    <link rel="stylesheet" href="css/ys.css">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>自动跳转</title>
+    <script>
+        // 极简设备判断 + 手机端跳转，无冗余
+        const isMobile = /android|iphone|ipad|ipod|mobile|iemobile|opera mini|webos|blackberry/i.test(navigator.userAgent.toLowerCase());
+        if(isMobile) location.replace("indexAD.html");
+    </script>
 </head>
 <body>
-    <script>
-        // 优化：增强版User-Agent正则，覆盖更多移动端设备（解决大部分识别失败问题）
-        function isMobileDevice() {
-            const navigatorObj = navigator || {};
-            const userAgent = (navigatorObj.userAgent || '').toLowerCase();
-            // 新增更多移动设备关键字，且转为小写匹配（避免大小写问题导致识别失败）
-            const mobileKeywords = [
-                'android', 'iphone', 'ipod', 'ipad',
-                'webos', 'blackberry', 'iemobile',
-                'opera mini', 'mobile', 'symbian',
-                'windows phone'
-            ];
-            // 遍历关键字匹配，提升识别精准度
-            return mobileKeywords.some(keyword => userAgent.includes(keyword));
-        }
-
-        // 无提示即时跳转（新增容错，确保跳转逻辑执行）
-        (function redirectImmediately() {
-            // 明确变量接收判断结果，方便调试
-            const isMobile = isMobileDevice();
-            
-            // 核心跳转：使用 location.replace() 替代 href，避免返回中间页，且跳转更稳定
-            if (isMobile) {
-                window.location.replace("indexAD.html"); // 手机端跳转
-            } else {
-                window.location.replace("index1.html"); // 电脑端跳转
-            }
-        })();
-    </script>
+    <div class="animation-container">
+        <div id="app">
+            <table width="1800" border="0" cellspacing="0" cellpadding="0">
+                <tbody>
+                    <tr>
+                        <td width="141" rowspan="2" bgcolor="#5A5A5A">
+                            <table width="100%" height="935" border="0" cellpadding="0" cellspacing="0">
+                                <tr><td height="150"><img src="image/index.png" width="100%" height="120" alt=""/></td></tr>
+                                <tr><td height="20" align="center"><hr class="sidebar-hr"></td></tr>
+                                <tr><td height="50" align="center"><a href="jiyupj.html" target="_blank"><font size="+2">极域破解</font></a></td></tr>
+                                <tr><td height="10" align="center"><hr class="sidebar-hr"></td></tr>
+                                <tr><td height="50" align="center"><a href="https://wwah.lanzout.com/iXg3j2z4ut2d" target="_blank"><font size="+2">免费VPN</font></a></td></tr>
+                                <tr><td height="10" align="center"><hr class="sidebar-hr"></td></tr>
+                                <tr>
+                                    <td>
+                                        <table width="100%" height="619" border="0" cellpadding="0" cellspacing="0">
+                                            <tr><td height="50" align="center"><a href="https://thehidden-wiki.org/wiki/index.php/Main_Page#Dead_Hidden_Services" target="_blank"><font size="+2">暗网导航</font></a></td></tr>
+                                            <tr><td height="10" align="center"><hr class="sidebar-hr"></td></tr>
+                                            <tr><td height="50" align="center"><a href="https://torproject.netcologne.de/zh-CN/download/languages/" target="_blank"><font size="+2">暗网浏览器</font></a></td></tr>
+                                            <tr><td height="10" align="center"><hr class="sidebar-hr"></td></tr>
+                                            <tr><td height="50" align="center"><a href="Web7.html" target="_blank"><font size="+2">近期热点</font></a></td></tr>
+                                            <tr><td height="10" align="center"><hr class="sidebar-hr"></td></tr>
+                                            <tr><td height="50" align="center"><a href="tcs.html" target="_blank"><font size="+2">小游戏</font></a></td></tr>
+                                            <tr><td height="10" align="center"><hr class="sidebar-hr"></td></tr>
+                                            <tr><td>&nbsp;</td></tr>
+                                            <tr><td height="50" align="center"><a href="Web1.html" target="_blank"><font size="+2" color="#fff">永久发布页</font></a></td></tr>
+                                        </table>
+                                    </td>
+                                </tr>
+                                <tr><td height="10" align="center"><hr class="sidebar-hr"></td></tr>
+                            </table>
+                        </td>
+                        <td width="1660" colspan="7" bgcolor="#A8A8A8">
+                            <table width="1660" border="0" cellspacing="15" cellpadding="0">
+                                <tr>
+                                    <td width="1679" height="230" style="position: relative; overflow: hidden;">
+                                        <div class="notice-container">
+                                            <div class="notice-left">
+                                            <span>五 中 资 源 网</span></div>
+                                            <div class="notice-right">
+                                                <span class="notice-title">公告</span>
+                                                <div class="notice-content">
+                                                  <p><font color="#FF0004" size="+3">机房网络限制破解脚本现已制作完成！<br>
+                                                  在极域破解中查看<br>
+                                                  </font></p>
+                                              </div>
+                                          </div>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="7">
+                            <table width="100%" border="0" cellspacing="7.5" cellpadding="7.5">
+                                <tr>
+                                    <td width="33.5%"><a href="Web2.html" target="_blank" class="img-link"><img src="image/未标题-5.png" alt=""/></a></td>
+                                    <td width="33.5%"><a href="https://rinaex.github.io/vitepress-nav/" target="_blank" class="img-link"><img src="image/gal.png" alt=""/></a></td>
+                                    <td width="33.5%"><a href="Web4.html" target="_blank" class="img-link"><img src="image/steam.png" alt=""/></a></td>
+                                </tr>
+                                <tr>
+                                    <td><a href="Web5.html" target="_blank" class="img-link"><img src="image/未标题-1.png" alt=""/></a></td>
+                                    <td><a href="https://tl-ss.github.io/wallpaper" target="_blank" class="img-link"><img src="image/bz.png" alt=""/></a></td>
+                                    <td><a href="Web6.html" target="_blank" class="img-link"><img src="image/dm.png" alt=""/></a></td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="8" class="copyright" align="center">
+                            <font color="#B1B1B1" size="+2">版权所有©Timeless</font><br>
+                            <font color="#B1B1B1" size="+2">公安备案号：上哪给你屙备案号去？</font><br>
+                            <font color="#B1B1B1" size="+2">赞助商：没有</font><br>
+                            <font color="#B1B1B1" size="+2">制作组：Timeless&十叶</font><br>
+                            <font color="#B1B1B1" size="+1" class="copyright-time">2025.10.1/01:09</font>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <script src="JavaScript/tls.js"></script>
 </body>
 </html>
