@@ -1,0 +1,927 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>JYKilltool</title>
+<link rel="shortcut icon" href="image/index.png" type="image/x-icon">
+<style type="text/css">
+  /* 全局重置与黑白灰基调设置 */
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  body {
+    background-color: #f5f5f5; /* 浅灰背景 */
+    color: #333; /* 深灰文本 */
+    font-family: "Microsoft YaHei", Arial, sans-serif;
+    line-height: 1.8;
+  }
+
+  /* 标题样式 */
+  h1 {
+    color: #222; /* 近黑标题 */
+    margin: 20px 0;
+    font-weight: 600;
+  }
+
+  /* 介绍文本居中对齐（核心需求） */
+  .intro-text {
+    text-align: center;
+    width: 80%;
+    margin: 0 auto 30px;
+    font-size: 16px;
+    color: #444;
+  }
+
+  /* 下载按钮样式（黑白灰风格） */
+  .download-btn {
+    display: inline-block;
+    width: 120px;
+    height: 40px;
+    line-height: 40px;
+    background-color: #333; /* 深灰背景 */
+    color: #fff; /* 白色文字 */
+    text-align: center;
+    text-decoration: none;
+    border-radius: 4px;
+    margin: 20px 0;
+    transition: background-color 0.3s;
+  }
+
+  .download-btn:hover {
+    background-color: #555; /* 浅灰hover效果 */
+  }
+
+  /* 代码容器样式（保证左对齐、适配行号） */
+  .code-container {
+    width: 85%;
+    margin: 0 auto 40px;
+    text-align: left; /* 代码左对齐 */
+  }
+
+  /* 自定义Java代码块样式（无外部JS，纯CSS） */
+  .java-code-block {
+    background-color: #2d2d2d !important; /* 深灰代码背景 */
+    color: #ccc !important; /* 默认浅灰普通文字 */
+    padding: 20px !important;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    margin: 15px 0 !important;
+    overflow-x: auto;
+    text-align: left !important; /* 强制左对齐 */
+    font-family: Consolas, "Courier New", monospace; /* 等宽字体，更贴合代码风格 */
+    line-height: 1.2; /* 关键修改1：减小代码块整体行高，让行更紧凑 */
+    counter-reset: line-num; /* 初始化行号计数器 */
+    white-space: pre; /* 关键修改2：精准控制空白，不自动换行多余空白 */
+  }
+
+  /* 行号实现（伪元素，无需JS） */
+  .java-code-block .line {
+    position: relative;
+    padding-left: 40px; /* 为行号预留空间 */
+    display: block; /* 每行独占一行 */
+    margin: 0; /* 关键修改3：清除行的上下外边距 */
+    padding-top: 0; /* 清除行的上内边距 */
+    padding-bottom: 0; /* 清除行的下内边距 */
+  }
+
+  .java-code-block .line:before {
+    counter-increment: line-num; /* 每行计数器+1 */
+    content: counter(line-num); /* 显示行号 */
+    position: absolute;
+    left: 0;
+    top: 0;
+    color: #888; /* 行号文字颜色（浅灰） */
+    text-align: right;
+    width: 30px; /* 行号宽度 */
+    padding-right: 10px;
+    border-right: 1px solid #555; /* 行号右侧分隔线（灰调） */
+  }
+
+  /* 代码彩色高亮样式定义（核心：通过不同class设置color） */
+  .kw { /* 关键字（public、static、if、else等） */
+    color: #cc7832; /* 橙色，贴近传统代码高亮风格 */
+  }
+
+  .str { /* 字符串（""包裹的内容） */
+    color: #6a8759; /* 绿色 */
+  }
+
+  .cmt { /* 注释（// 或 /* */ */
+    color: #808080; /* 灰色，斜体增强区分 */
+    font-style: italic;
+  }
+
+  .cls { /* 类名、接口名 */
+    color: #4ec9b0; /* 青色 */
+  }
+
+  .meth { /* 方法名 */
+    color: #dcdcaa; /* 浅黄色 */
+  }
+
+  .pkg { /* 包名、导入路径 */
+    color: #9cdcfe; /* 淡蓝色 */
+  }
+
+  .exc { /* 异常类 */
+    color: #c586c0; /* 紫色 */
+  }
+
+  .var { /* 变量名（可选，提升区分度） */
+    color: #9cdcfe; /* 淡蓝色 */
+  }
+
+  /* 表格样式（黑白灰适配） */
+  table {
+    width: 90%;
+    margin: 0 auto 30px;
+    border-collapse: collapse;
+    background-color: #fff; /* 白色表格背景 */
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  }
+
+  table td {
+    padding: 12px;
+    border: 1px solid #eee; /* 浅灰表格边框 */
+    vertical-align: top;
+  }
+
+  .table-header-left {
+    width: 30%;
+    height: 30px;
+    background-color: #e0e0e0; /* 浅灰表格头部 */
+    color: #333;
+    text-align: left;
+    padding-left: 20px;
+  }
+
+  .table-header-right {
+    width: 30%;
+    height: 30px;
+    background-color: #e0e0e0; /* 浅灰表格头部 */
+    color: #333;
+    text-align: right;
+    padding-right: 20px;
+  }
+
+  .table-code-bg {
+    background-color: #2d2d2d; /* 表格内代码背景（与代码块一致） */
+    color: #ccc;
+    text-align: left !important; /* 强制左对齐 */
+    padding: 15px !important;
+    font-family: Consolas, "Courier New", monospace;
+  }
+
+  /* 页面整体居中容器 */
+  .container {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px 0;
+    text-align: center;
+  }
+</style>
+</head>
+
+<body>
+<div class="container">
+  <h1>集成化极域破解脚本</h1>
+  <!-- 下载按钮 -->
+  <a href="exe/setup.exe" download="setup.exe" class="download-btn">下载</a>
+
+  <!-- 介绍文本（居中对齐） -->
+  <p class="intro-text">
+    这是一个由我自己耗时7小时开发出来的程序，从源代码--编译--打包--制作exe--制作安装包等全流程都是由我一人完成的。<br>
+    使用java语言，五百九十多行代码。Java和计算机网络专业所学的C语言是不一样的，不只是在编译和打包上。java想要从源代码<br>
+    成为一个可执行文件（.exe文件）是要经历数个繁琐的过程。首先写出java源代码文件（.java）后，再使用终端指令（cmd）进行<br>
+    编译操作：
+  </p>
+
+  <!-- CMD指令表格1 -->
+  <table border="0" cellspacing="0" cellpadding="0">
+    <tbody>
+      <tr>
+        <td rowspan="2" bgcolor="#F5F5F5">&nbsp;</td>
+        <td class="table-header-left">cmd</td>
+        <td class="table-header-right">指令</td>
+        <td rowspan="2" bgcolor="#F5F5F5">&nbsp;</td>
+      </tr>
+      <tr>
+        <td height="60" colspan="2" class="table-code-bg">1.|javac -encoding UTF-8 文件名.java</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- 介绍文本（居中对齐） -->
+  <p class="intro-text">
+    在运行以上指令后，Java会将.java文件编译为“.class”字节码文件，这个时候，就已经可以通过指令运行这个字节码文件了
+  </p>
+
+  <!-- CMD指令表格2 -->
+  <table border="0" cellspacing="0" cellpadding="0">
+    <tbody>
+      <tr>
+        <td rowspan="2" bgcolor="#F5F5F5">&nbsp;</td>
+        <td class="table-header-left">cmd</td>
+        <td class="table-header-right">指令</td>
+        <td rowspan="2" bgcolor="#F5F5F5">&nbsp;</td>
+      </tr>
+      <tr>
+        <td height="180" colspan="2" class="table-code-bg" style="vertical-align: top;">
+          1.|//首先要先定位文件位置<br>
+          2.|盘符：（如“D:”）<br>
+          3.|//这样就会将路径指向指定的磁盘了，接下来就是定位到目录<br>
+          4.|cd 文件路径<br>
+          5.|//定位完成之后，就可以通过“java”命令来运行这个字节码文件了<br>
+          6.|java 文件名
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- 介绍文本（居中对齐） -->
+  <p class="intro-text">sss.class文件在D盘的a\123文件夹中</p>
+
+  <!-- CMD指令表格3 -->
+  <table border="0" cellspacing="0" cellpadding="0">
+    <tbody>
+      <tr>
+        <td rowspan="2" bgcolor="#F5F5F5">&nbsp;</td>
+        <td class="table-header-left">cmd</td>
+        <td class="table-header-right">指令</td>
+        <td rowspan="2" bgcolor="#F5F5F5">&nbsp;</td>
+      </tr>
+      <tr>
+        <td height="80" colspan="2" class="table-code-bg">
+          1.|D:<br>
+          2.|cd a\123<br>
+          3.|java sss
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- 介绍文本（居中对齐） -->
+  <p class="intro-text">
+    虽然字节码已经可以运行了，但它还不是一个真正的程序。我需要在字节码文件的根目录下建立一个“MANIFEST.MF”文件<br>
+    在其中输入
+  </p>
+
+  <!-- MANIFEST.MF表格 -->
+  <table border="0" cellspacing="0" cellpadding="0">
+    <tbody>
+      <tr>
+        <td rowspan="2" bgcolor="#F5F5F5">&nbsp;</td>
+        <td class="table-header-left">MANIFEST.MF</td>
+        <td class="table-header-right">指令</td>
+        <td rowspan="2" bgcolor="#F5F5F5">&nbsp;</td>
+      </tr>
+      <tr>
+        <td height="80" colspan="2" class="table-code-bg">
+          1.|Manifest-Version: 1.0<br>
+          2.|Main-Class: JYKilltool<br>
+          3.|
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- 介绍文本（居中对齐） -->
+  <p class="intro-text">
+    这相当于一个引导文件。<br>
+    接下来我还要将.class文件和MANIFEST.MF一起打包进一个.jar文件里
+  </p>
+
+  <!-- JAR指令表格 -->
+  <table border="0" cellspacing="0" cellpadding="0">
+    <tbody>
+      <tr>
+        <td rowspan="2" bgcolor="#F5F5F5">&nbsp;</td>
+        <td class="table-header-left">cmd</td>
+        <td class="table-header-right">指令</td>
+        <td rowspan="2" bgcolor="#F5F5F5">&nbsp;</td>
+      </tr>
+      <tr>
+        <td height="100" colspan="2" class="table-code-bg" style="vertical-align: middle;">
+          1.|jar cvfm JYKilltool.jar manifest.mf JYKilltool.class<br>
+          2.|//注：这里的JYKilltool是我的源文件
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- 介绍文本（居中对齐） -->
+  <p class="intro-text">
+    将程序打包为.jar后，还要提取java中的jre到根目录中（相对），然后再利用打包工具将jar文件编译为exe。<br>
+    之后就是制作安装包
+  </p>
+
+  <!-- 代码标题 -->
+  <h1>源代码</h1>
+
+  <!-- 介绍文本（居中对齐） -->
+  <p class="intro-text">
+    先导入（import）必要的包，然后在公共类（public）中指定一个class，使用main()方法、打印（println）。整个程序的核心就是if选择结构<br>
+    和生成临时bat（Windows批处理脚本语言）文件并运行
+  </p>
+
+  <!-- Java代码块（纯CSS实现彩色高亮、行号、左对齐，无外部JS） -->
+  <div class="code-container">
+    <pre class="java-code-block">
+<span class="line"><span class="kw">import</span> <span class="pkg">java.io.BufferedReader</span>;</span>
+<span class="line"><span class="kw">import</span> <span class="pkg">java.io.File</span>;</span>
+<span class="line"><span class="kw">import</span> <span class="pkg">java.io.FileOutputStream</span>;</span>
+<span class="line"><span class="kw">import</span> <span class="pkg">java.io.IOException</span>;</span>
+<span class="line"><span class="kw">import</span> <span class="pkg">java.io.InputStream</span>;</span>
+<span class="line"><span class="kw">import</span> <span class="pkg">java.io.InputStreamReader</span>;</span>
+<span class="line"><span class="kw">import</span> <span class="pkg">java.io.OutputStreamWriter</span>;</span>
+<span class="line"><span class="kw">import</span> <span class="pkg">java.io.PrintWriter</span>;</span>
+<span class="line"><span class="kw">import</span> <span class="pkg">java.util.Scanner</span>;</span>
+<span class="line"></span>
+<span class="line"><span class="kw">public</span> <span class="kw">class</span> <span class="cls">JYKilltool</span> {</span>
+<span class="line">    <span class="kw">public</span> <span class="kw">static</span> <span class="kw">void</span> <span class="meth">main</span>(String[] args) {</span>
+<span class="line">        Scanner <span class="var">scanner</span>=<span class="kw">new</span> Scanner(System.in);</span>
+<span class="line">        System.out.<span class="meth">println</span>(<span class="str">"=================================================="</span>);</span>
+<span class="line">        System.out.<span class="meth">println</span>(<span class="str">"     ╭───╮ ╭───╮ ╭───╮ ╭───╮"</span>);</span>
+<span class="line">        System.out.<span class="meth">println</span>(<span class="str">"     │ J │ │ Y │ │ K │ │ T │"</span>);</span>
+<span class="line">        System.out.<span class="meth">println</span>(<span class="str">"     ╰───╯ ╰───╯ ╰───╯ ╰───╯"</span>);</span>
+<span class="line">        System.out.<span class="meth">println</span>(<span class="str">"         集成化极域破解工具"</span>);</span>
+<span class="line">        System.out.<span class="meth">println</span>(<span class="str">"             Timeless"</span>);</span>
+<span class="line">        System.out.<span class="meth">println</span>(<span class="str">"     下载地址 五中资源网：https://tl-ss.github.io/AW"</span>);</span>
+<span class="line">        System.out.<span class="meth">println</span>(<span class="str">"=================================================="</span>);</span>
+<span class="line">        <span class="kw">try</span> {</span>
+<span class="line">            Thread.<span class="meth">sleep</span>(1000); </span>
+<span class="line">        } <span class="kw">catch</span> (InterruptedException <span class="var">e</span>) {</span>
+<span class="line">            e.<span class="meth">printStackTrace</span>();</span>
+<span class="line">        }</span>
+<span class="line"></span>
+<span class="line">        System.out.<span class="meth">println</span>(<span class="str">"输入\"help\"查看帮助"</span>);</span>
+<span class="line"></span>
+<span class="line">        <span class="kw">while</span>(<span class="kw">true</span>) {</span>
+<span class="line">            String <span class="var">code</span> = scanner.<span class="meth">next</span>();</span>
+<span class="line">            <span class="kw">if</span>(code.<span class="meth">equals</span>(<span class="str">"help"</span>)){</span>
+<span class="line">                System.out.<span class="meth">println</span>(<span class="str">"=================================================="</span>);</span>
+<span class="line">                System.out.<span class="meth">println</span>(<span class="str">"                 H E L P"</span>);</span>
+<span class="line">                System.out.<span class="meth">println</span>(<span class="str">"                 帮助"</span>);</span>
+<span class="line">                System.out.<span class="meth">println</span>(<span class="str">"             ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓"</span>);</span>
+<span class="line">                System.out.<span class="meth">println</span>(<span class="str">"stop           脱离教师控制"</span>);</span>
+<span class="line">                System.out.<span class="meth">println</span>(<span class="str">"disable        解除网络控制"</span>);</span>
+<span class="line">                System.out.<span class="meth">println</span>(<span class="str">"Kdisable       解除网络控制pro max强力版"</span>);</span>
+<span class="line">                System.out.<span class="meth">println</span>(<span class="str">"debug          解决运行\"解除网络控制pro max强力版\"后电脑可能会产生的卡顿现象"</span>);</span>
+<span class="line">                System.out.<span class="meth">println</span>(<span class="str">"optimize       网络优化"</span>);</span>
+<span class="line">                System.out.<span class="meth">println</span>(<span class="str">"passwd         破解极域密码（测试版）"</span>);</span>
+<span class="line">                System.out.<span class="meth">println</span>(<span class="str">"exit           退出"</span>);</span>
+<span class="line">                System.out.<span class="meth">println</span>(<span class="str">"=================================================="</span>);</span>
+<span class="line">            }<span class="kw">else</span> <span class="kw">if</span>(code.<span class="meth">equals</span>(<span class="str">"passwd"</span>)){</span>
+<span class="line">                System.out.<span class="meth">println</span>(<span class="str">"正在破解中..."</span>);</span>
+<span class="line">                <span class="kw">try</span> {</span>
+<span class="line">                    Thread.<span class="meth">sleep</span>(3000); </span>
+<span class="line">                } <span class="kw">catch</span> (InterruptedException <span class="var">e</span>) {</span>
+<span class="line">                    e.<span class="meth">printStackTrace</span>();</span>
+<span class="line">                }</span>
+<span class="line">                String <span class="var">regPath</span> = <span class="str">"HKEY_LOCAL_MACHINE\\SOFTWARE\\TopDomain\\e-learning Class Standard\\1.00"</span>;</span>
+<span class="line">                String <span class="var">regItem</span> = <span class="str">"UninstallPasswd"</span>;</span>
+<span class="line">                String <span class="var">resultData</span> = <span class="kw">null</span>;</span>
+<span class="line"></span>
+<span class="line">                <span class="kw">try</span> {</span>
+<span class="line">                    <span class="cmt">// 构建reg query命令</span></span>
+<span class="line">                    String[] <span class="var">cmd</span> = {<span class="str">"reg"</span>, <span class="str">"query"</span>, regPath, <span class="str">"/v"</span>, regItem, <span class="str">"/reg:64"</span>};</span>
+<span class="line">                    Process <span class="var">process</span> = <span class="kw">new</span> ProcessBuilder(cmd).<span class="meth">start</span>();</span>
+<span class="line">                    BufferedReader <span class="var">reader</span> = <span class="kw">new</span> BufferedReader(<span class="kw">new</span> InputStreamReader(process.<span class="meth">getInputStream</span>(), <span class="str">"GBK"</span>));</span>
+<span class="line">                    String <span class="var">line</span>;</span>
+<span class="line"></span>
+<span class="line">                    <span class="cmt">// 解析命令输出，提取目标数据</span></span>
+<span class="line">                    <span class="kw">while</span> ((line = reader.<span class="meth">readLine</span>()) != <span class="kw">null</span>) {</span>
+<span class="line">                        String <span class="var">trimLine</span> = line.<span class="meth">trim</span>();</span>
+<span class="line">                        <span class="kw">if</span> (trimLine.<span class="meth">contains</span>(regItem)) {</span>
+<span class="line">                            String[] <span class="var">parts</span> = trimLine.<span class="meth">split</span>(<span class="str">"\\s+"</span>);</span>
+<span class="line">                            <span class="kw">if</span> (parts.length >= 3) {</span>
+<span class="line">                                resultData = parts[parts.length - 1];</span>
+<span class="line">                            }</span>
+<span class="line">                            <span class="kw">break</span>;</span>
+<span class="line">                        }</span>
+<span class="line">                    }</span>
+<span class="line"></span>
+<span class="line">                    <span class="cmt">// 处理结果：忽略前6位并输出</span></span>
+<span class="line">                    <span class="kw">if</span> (resultData != <span class="kw">null</span>) {</span>
+<span class="line">                        <span class="kw">if</span> (resultData.<span class="meth">length</span>() > 6) {</span>
+<span class="line">                            String <span class="var">targetData</span> = resultData.<span class="meth">substring</span>(6);</span>
+<span class="line">                            System.out.<span class="meth">println</span>(<span class="str">"UninstallPasswd忽略前6位结果："</span> + targetData);</span>
+<span class="line">                        } <span class="kw">else</span> {</span>
+<span class="line">                            System.out.<span class="meth">println</span>(<span class="str">"提示：UninstallPasswd数据长度≤6位，无有效内容输出。"</span>);</span>
+<span class="line">                        }</span>
+<span class="line">                    } <span class="kw">else</span> {</span>
+<span class="line">                        System.out.<span class="meth">println</span>(<span class="str">"错误：未查询到UninstallPasswd项。"</span>);</span>
+<span class="line">                    }</span>
+<span class="line"></span>
+<span class="line">                    <span class="cmt">// 关闭资源</span></span>
+<span class="line">                    reader.<span class="meth">close</span>();</span>
+<span class="line">                    process.<span class="meth">waitFor</span>();</span>
+<span class="line">                } <span class="kw">catch</span> (IOException <span class="var">e</span>) {</span>
+<span class="line">                    System.err.<span class="meth">println</span>(<span class="str">"IO异常：查询注册表失败（非Windows系统或命令不可用）。"</span>);</span>
+<span class="line">                    e.<span class="meth">printStackTrace</span>();</span>
+<span class="line">                } <span class="kw">catch</span> (InterruptedException <span class="var">e</span>) {</span>
+<span class="line">                    System.err.<span class="meth">println</span>(<span class="str">"进程中断异常：注册表查询进程被中断。"</span>);</span>
+<span class="line">                    e.<span class="meth">printStackTrace</span>();</span>
+<span class="line">                }</span>
+<span class="line">                System.out.<span class="meth">println</span>(<span class="str">"=================================================="</span>);</span>
+<span class="line">            }<span class="kw">else</span> <span class="kw">if</span>(code.<span class="meth">equals</span>(<span class="str">"exit"</span>)){</span>
+<span class="line">                System.out.<span class="meth">println</span>(<span class="str">"确定要退出？"</span>);</span>
+<span class="line">                System.out.<span class="meth">println</span>(<span class="str">"是（Y）/否（N）"</span>);</span>
+<span class="line">                String <span class="var">exit</span> = scanner.<span class="meth">next</span>();</span>
+<span class="line">                <span class="kw">if</span>(exit.<span class="meth">equals</span>(<span class="str">"N"</span>)||exit.<span class="meth">equals</span>(<span class="str">"n"</span>)){</span>
+<span class="line">                    System.out.<span class="meth">println</span>(<span class="str">"已取消"</span>);</span>
+<span class="line">                    System.out.<span class="meth">println</span>(<span class="str">"=================================================="</span>);</span>
+<span class="line">                }<span class="kw">else</span> <span class="kw">if</span>(exit.<span class="meth">equals</span>(<span class="str">"Y"</span>)||exit.<span class="meth">equals</span>(<span class="str">"y"</span>)){</span>
+<span class="line">                    System.out.<span class="meth">println</span>(<span class="str">"已退出程序"</span>);</span>
+<span class="line">                    System.out.<span class="meth">println</span>(<span class="str">"=================================================="</span>);</span>
+<span class="line">                    <span class="kw">break</span>;</span>
+<span class="line">                }</span>
+<span class="line">            }<span class="kw">else</span> <span class="kw">if</span>(code.<span class="meth">equals</span>(<span class="str">"stop"</span>)){</span>
+<span class="line">                System.out.<span class="meth">println</span>(<span class="str">"开始脱离教师机"</span>);</span>
+<span class="line"></span>
+<span class="line">                <span class="cmt">// 1. BAT内容（CRLF格式，自动关闭窗口）</span></span>
+<span class="line">                String <span class="var">batContent</span> = <span class="str">"@echo off\r\n"</span></span>
+<span class="line">                    + <span class="str">"chcp 65001 >nul\r\n"</span></span>
+<span class="line">                    + <span class="str">"setlocal enabledelayedexpansion\r\n"</span></span>
+<span class="line">                    + <span class="str">"\r\n"</span></span>
+<span class="line">                    + <span class="str">"echo ==============================\r\n"</span></span>
+<span class="line">                    + <span class="str">"echo 正在禁用所有网络适配器...\r\n"</span></span>
+<span class="line">                    + <span class="str">"echo ==============================\r\n"</span></span>
+<span class="line">                    + <span class="str">":: 遍历索引1到10的适配器并禁用\r\n"</span></span>
+<span class="line">                    + <span class="str">"for /l %%i in (1,1,10) do (\r\n"</span></span>
+<span class="line">                    + <span class="str">"    wmic path win32_networkadapter where Index=%%i call disable >nul 2>&1\r\n"</span></span>
+<span class="line">                    + <span class="str">"    echo 已尝试禁用索引 %%i 的适配器\r\n"</span></span>
+<span class="line">                    + <span class="str">")\r\n"</span></span>
+<span class="line">                    + <span class="str">"\r\n"</span></span>
+<span class="line">                    + <span class="str">"echo.\r\n"</span></span>
+<span class="line">                    + <span class="str">"echo 禁用完成，当前状态：\r\n"</span></span>
+<span class="line">                    + <span class="str">"wmic nic get Name,Index,NetEnabled | findstr \"TRUE FALSE\"\r\n"</span></span>
+<span class="line">                    + <span class="str">"\r\n"</span></span>
+<span class="line">                    + <span class="str">"echo.\r\n"</span></span>
+<span class="line">                    + <span class="str">"echo ==============================\r\n"</span></span>
+<span class="line">                    + <span class="str">"echo 等待3秒后将自动启用所有适配器...\r\n"</span></span>
+<span class="line">                    + <span class="str">"echo ==============================\r\n"</span></span>
+<span class="line">                    + <span class="str">"timeout /t 3 /nobreak >nul\r\n"</span></span>
+<span class="line">                    + <span class="str">"\r\n"</span></span>
+<span class="line">                    + <span class="str">"echo.\r\n"</span></span>
+<span class="line">                    + <span class="str">"echo 正在启用所有网络适配器...\r\n"</span></span>
+<span class="line">                    + <span class="str">":: 遍历索引1到10的适配器并启用\r\n"</span></span>
+<span class="line">                    + <span class="str">"for /l %%i in (1,1,10) do (\r\n"</span></span>
+<span class="line">                    + <span class="str">"    wmic path win32_networkadapter where Index=%%i call enable >nul 2>&1\r\n"</span></span>
+<span class="line">                    + <span class="str">"    echo 已尝试启用索引 %%i 的适配器\r\n"</span></span>
+<span class="line">                    + <span class="str">")\r\n"</span></span>
+<span class="line">                    + <span class="str">"\r\n"</span></span>
+<span class="line">                    + <span class="str">"echo.\r\n"</span></span>
+<span class="line">                    + <span class="str">"echo 启用完成，当前状态：\r\n"</span></span>
+<span class="line">                    + <span class="str">"wmic nic get Name,Index,NetEnabled | findstr \"TRUE FALSE\"\r\n"</span></span>
+<span class="line">                    + <span class="str">"\r\n"</span></span>
+<span class="line">                    + <span class="str">"exit"</span>;</span>
+<span class="line"></span>
+<span class="line">                String <span class="var">batFileName</span> = <span class="str">"JYStopProcess_"</span> + System.<span class="meth">currentTimeMillis</span>() + <span class="str">".bat"</span>;</span>
+<span class="line">                File <span class="var">batFile</span> = <span class="kw">new</span> File(batFileName);</span>
+<span class="line"></span>
+<span class="line">                <span class="kw">try</span> {</span>
+<span class="line">                    OutputStreamWriter <span class="var">osw</span> = <span class="kw">new</span> OutputStreamWriter(<span class="kw">new</span> FileOutputStream(batFile), <span class="str">"UTF-8"</span>);</span>
+<span class="line">                    PrintWriter <span class="var">pw</span> = <span class="kw">new</span> PrintWriter(osw);</span>
+<span class="line">                    pw.<span class="meth">write</span>(batContent);</span>
+<span class="line">                    pw.<span class="meth">flush</span>();</span>
+<span class="line">                    pw.<span class="meth">close</span>();</span>
+<span class="line">                    osw.<span class="meth">close</span>();</span>
+<span class="line"></span>
+<span class="line">                    <span class="kw">if</span> (!batFile.<span class="meth">exists</span>() || batFile.<span class="meth">length</span>() == 0) {</span>
+<span class="line">                        System.out.<span class="meth">println</span>(<span class="str">"错误：脚本创建失败或文件为空！"</span>);</span>
+<span class="line">                        <span class="kw">return</span>;</span>
+<span class="line">                    }</span>
+<span class="line">                    System.out.<span class="meth">println</span>(<span class="str">"正在运行脚本（请在弹出的窗口中授权管理员权限）"</span>);</span>
+<span class="line"></span>
+<span class="line">                    <span class="cmt">// 核心改进：用powershell启动，并获取进程句柄</span></span>
+<span class="line">                    String <span class="var">psCommand</span> = String.<span class="meth">format</span>(</span>
+<span class="line">                        <span class="str">"Start-Process -FilePath \"%s\" -Verb RunAs -Wait"</span>,</span>
+<span class="line">                        batFile.<span class="meth">getAbsolutePath</span>()</span>
+<span class="line">                    );</span>
+<span class="line">                    ProcessBuilder <span class="var">pb</span> = <span class="kw">new</span> ProcessBuilder(<span class="str">"powershell"</span>, <span class="str">"-Command"</span>, psCommand);</span>
+<span class="line">                    Process <span class="var">process</span> = pb.<span class="meth">start</span>();</span>
+<span class="line"></span>
+<span class="line">                    <span class="cmt">// 等待BAT进程完全执行结束（管理员权限的进程执行完才会继续）</span></span>
+<span class="line">                    process.<span class="meth">waitFor</span>();</span>
+<span class="line">                    System.out.<span class="meth">println</span>(<span class="str">"脚本已执行完毕"</span>);</span>
+<span class="line"></span>
+<span class="line">                } <span class="kw">catch</span> (IOException | InterruptedException <span class="var">e</span>) {</span>
+<span class="line">                    System.out.<span class="meth">println</span>(<span class="str">"错误：执行过程中出现异常！"</span>);</span>
+<span class="line">                    e.<span class="meth">printStackTrace</span>();</span>
+<span class="line">                } <span class="kw">finally</span> {</span>
+<span class="line">                    <span class="cmt">// 进程执行完后再删除，无需延迟</span></span>
+<span class="line">                    <span class="kw">if</span> (batFile.<span class="meth">exists</span>()) {</span>
+<span class="line">                        <span class="kw">boolean</span> <span class="var">deleted</span> = batFile.<span class="meth">delete</span>();</span>
+<span class="line">                        <span class="kw">if</span> (deleted) {</span>
+<span class="line">                            System.out.<span class="meth">println</span>(<span class="str">"已脱离教师控制"</span>);</span>
+<span class="line">                        } <span class="kw">else</span> {</span>
+<span class="line">                            System.out.<span class="meth">println</span>(<span class="str">"脚本执行完成"</span>);</span>
+<span class="line">                            System.out.<span class="meth">println</span>(<span class="str">"=================================================="</span>);</span>
+<span class="line">                        }</span>
+<span class="line">                    }</span>
+<span class="line">                }</span>
+<span class="line">            }<span class="kw">else</span> <span class="kw">if</span>(code.<span class="meth">equals</span>(<span class="str">"disable"</span>)){</span>
+<span class="line">                System.out.<span class="meth">println</span>(<span class="str">"开始解除网络控制"</span>);</span>
+<span class="line"></span>
+<span class="line">                <span class="cmt">// 1. 嵌入指定的BAT内容，换行符用\r\n（Windows CRLF格式），末尾添加exit自动关闭窗口</span></span>
+<span class="line">                String <span class="var">batContent</span> = <span class="str">"title Timeless-进程阻断1.1\r\n"</span></span>
+<span class="line">                    + <span class="str">"@echo off\r\n"</span></span>
+<span class="line">                    + <span class="str">"echo 正在获取管理员权限...\r\n"</span></span>
+<span class="line">                    + <span class="str">">nul 2>&1 \"%SYSTEMROOT%\\system32\\cacls.exe\" \"%SYSTEMROOT%\\system32\\config\\system\"\r\n"</span></span>
+<span class="line">                    + <span class="str">"if %errorlevel% neq 0 (\r\n"</span></span>
+<span class="line">                    + <span class="str">"    powershell -Command \"Start-Process '%~f0' -Verb RunAs\" >nul 2>&1\r\n"</span></span>
+<span class="line">                    + <span class="str">"    exit /b\r\n"</span></span>
+<span class="line">                    + <span class="str">")\r\n"</span></span>
+<span class="line">                    + <span class="str">"\r\n"</span></span>
+<span class="line">                    + <span class="str">"@echo off\r\n"</span></span>
+<span class="line">                    + <span class="str">"echo ==============================\r\n"</span></span>
+<span class="line">                    + <span class="str">"echo 正在结束MasterHelper.exe进程\r\n"</span></span>
+<span class="line">                    + <span class="str">"echo ==============================\r\n"</span></span>
+<span class="line">                    + <span class="str">"timeout /t 2 /nobreak >nul\r\n"</span></span>
+<span class="line">                    + <span class="str">"echo.\r\n"</span></span>
+<span class="line">                    + <span class="str">"taskkill /f /im MasterHelper.exe\r\n"</span></span>
+<span class="line">                    + <span class="str">"echo.\r\n"</span></span>
+<span class="line">                    + <span class="str">"echo ==============================\r\n"</span></span>
+<span class="line">                    + <span class="str">"echo 正在终止tdnetfilter服务.\r\n"</span></span>
+<span class="line">                    + <span class="str">"echo ==============================\r\n"</span></span>
+<span class="line">                    + <span class="str">"timeout /t 2 /nobreak >nul\r\n"</span></span>
+<span class="line">                    + <span class="str">"echo.\r\n"</span></span>
+<span class="line">                    + <span class="str">"sc stop tdnetfilter\r\n"</span></span>
+<span class="line">                    + <span class="str">"echo ==============================\r\n"</span></span>
+<span class="line">                    + <span class="str">"echo 完成\r\n"</span></span>
+<span class="line">                    + <span class="str">"echo ==============================\r\n"</span></span>
+<span class="line">                    + <span class="str">":: 等待3秒（timeout命令更精准，兼容Win7/10/11）\r\n"</span></span>
+<span class="line">                    + <span class="str">"timeout /t 3 /nobreak >nul\r\n"</span></span>
+<span class="line">                    + <span class="str">"echo.\r\n"</span></span>
+<span class="line">                    + <span class="str">"exit"</span>;</span>
+<span class="line"></span>
+<span class="line">                <span class="cmt">// 2. 定义disable分支专属BAT文件名</span></span>
+<span class="line">                String <span class="var">batFileName</span> = <span class="str">"JYDisableProcess_"</span> + System.<span class="meth">currentTimeMillis</span>() + <span class="str">".bat"</span>;</span>
+<span class="line">                File <span class="var">batFile</span> = <span class="kw">new</span> File(batFileName);</span>
+<span class="line"></span>
+<span class="line">                <span class="kw">try</span> {</span>
+<span class="line">                    <span class="cmt">// 3. 核心：以ANSI编码（Windows默认GBK）写入BAT文件</span></span>
+<span class="line">                    <span class="cmt">// ANSI对应Windows系统默认编码，此处用GBK兼容所有Windows环境</span></span>
+<span class="line">                    OutputStreamWriter <span class="var">osw</span> = <span class="kw">new</span> OutputStreamWriter(<span class="kw">new</span> FileOutputStream(batFile), <span class="str">"GBK"</span>);</span>
+<span class="line">                    PrintWriter <span class="var">pw</span> = <span class="kw">new</span> PrintWriter(osw);</span>
+<span class="line"></span>
+<span class="line">                    pw.<span class="meth">write</span>(batContent);</span>
+<span class="line">                    pw.<span class="meth">flush</span>();</span>
+<span class="line">                    pw.<span class="meth">close</span>();</span>
+<span class="line">                    osw.<span class="meth">close</span>();</span>
+<span class="line"></span>
+<span class="line">                    <span class="cmt">// 4. 验证BAT文件是否有效</span></span>
+<span class="line">                    <span class="kw">if</span> (!batFile.<span class="meth">exists</span>() || batFile.<span class="meth">length</span>() == 0) {</span>
+<span class="line">                        System.out.<span class="meth">println</span>(<span class="str">"错误：解除网络控制脚本创建失败或文件为空！"</span>);</span>
+<span class="line">                        <span class="kw">return</span>;</span>
+<span class="line">                    }</span>
+<span class="line">                    System.out.<span class="meth">println</span>(<span class="str">"正在运行解除网络控制脚本（请在弹出的窗口中授权管理员权限）"</span>);</span>
+<span class="line"></span>
+<span class="line">                    <span class="cmt">// 5. 复用成熟逻辑：powershell以管理员身份运行，等待执行完毕</span></span>
+<span class="line">                    String <span class="var">psCommand</span> = String.<span class="meth">format</span>(</span>
+<span class="line">                        <span class="str">"Start-Process -FilePath \"%s\" -Verb RunAs -Wait"</span>,</span>
+<span class="line">                        batFile.<span class="meth">getAbsolutePath</span>()</span>
+<span class="line">                    );</span>
+<span class="line">                    ProcessBuilder <span class="var">pb</span> = <span class="kw">new</span> ProcessBuilder(<span class="str">"powershell"</span>, <span class="str">"-Command"</span>, psCommand);</span>
+<span class="line">                    Process <span class="var">process</span> = pb.<span class="meth">start</span>();</span>
+<span class="line"></span>
+<span class="line">                    <span class="cmt">// 6. 等待管理员进程完全执行完毕</span></span>
+<span class="line">                    process.<span class="meth">waitFor</span>();</span>
+<span class="line">                    System.out.<span class="meth">println</span>(<span class="str">"解除网络控制脚本已完全执行完毕"</span>);</span>
+<span class="line"></span>
+<span class="line">                } <span class="kw">catch</span> (IOException | InterruptedException <span class="var">e</span>) {</span>
+<span class="line">                    System.out.<span class="meth">println</span>(<span class="str">"错误：执行解除网络控制脚本过程中出现异常！"</span>);</span>
+<span class="line">                    e.<span class="meth">printStackTrace</span>();</span>
+<span class="line">                } <span class="kw">finally</span> {</span>
+<span class="line">                    <span class="cmt">// 7. 执行完毕后删除BAT文件，无需延迟</span></span>
+<span class="line">                    <span class="kw">if</span> (batFile.<span class="meth">exists</span>()) {</span>
+<span class="line">                        <span class="kw">boolean</span> <span class="var">deleted</span> = batFile.<span class="meth">delete</span>();</span>
+<span class="line">                        <span class="kw">if</span> (deleted) {</span>
+<span class="line">                            System.out.<span class="meth">println</span>(<span class="str">"已成功解除网络控制"</span>);</span>
+<span class="line">                        } <span class="kw">else</span> {</span>
+<span class="line">                            System.out.<span class="meth">println</span>(<span class="str">"解除网络控制脚本执行完成，但脚本文件删除失败"</span>);</span>
+<span class="line">                            System.out.<span class="meth">println</span>(<span class="str">"=================================================="</span>);</span>
+<span class="line">                        }</span>
+<span class="line">                    }</span>
+<span class="line">                }</span>
+<span class="line">            }<span class="kw">else</span> <span class="kw">if</span>(code.<span class="meth">equals</span>(<span class="str">"Kdisable"</span>)){</span>
+<span class="line">                System.out.<span class="meth">println</span>(<span class="str">"此操作会与老师断开连接，如有需要请手动连接，具体方法见\"https://tl-ss.github.io/AW/jiyupj.html\""</span>);</span>
+<span class="line">                System.out.<span class="meth">println</span>(<span class="str">"你有五秒钟的时间思考要不要继续运行，在这期间，你随时可以按下\"ctrl+C\"来结束这个进程"</span>);</span>
+<span class="line">                <span class="kw">try</span> {</span>
+<span class="line">                    Thread.<span class="meth">sleep</span>(5000);</span>
+<span class="line">                } <span class="kw">catch</span> (InterruptedException <span class="var">e</span>) {</span>
+<span class="line">                    e.<span class="meth">printStackTrace</span>();</span>
+<span class="line">                }</span>
+<span class="line">                System.out.<span class="meth">println</span>(<span class="str">"开始运行解除网络控制pro max强力版"</span>);</span>
+<span class="line"></span>
+<span class="line">                <span class="cmt">// 1. 嵌入指定的强力版BAT内容，换行符用\r\n（Windows CRLF格式），末尾添加exit自动关闭窗口</span></span>
+<span class="line">                String <span class="var">batContent</span> = <span class="str">"title Timeless-Disable Ethernet Restrictions version1.0\r\n"</span></span>
+<span class="line">                    + <span class="str">"@echo off\r\n"</span></span>
+<span class="line">                    + <span class="str">"echo 正在获取管理员权限...\r\n"</span></span>
+<span class="line">                    + <span class="str">">nul 2>&1 \"%SYSTEMROOT%\\system32\\cacls.exe\" \"%SYSTEMROOT%\\system32\\config\\system\"\r\n"</span></span>
+<span class="line">                    + <span class="str">"if %errorlevel% neq 0 (\r\n"</span></span>
+<span class="line">                    + <span class="str">"    powershell -Command \"Start-Process '%~f0' -Verb RunAs\" >nul 2>&1\r\n"</span></span>
+<span class="line">                    + <span class="str">"    exit /b\r\n"</span></span>
+<span class="line">                    + <span class="str">")\r\n"</span></span>
+<span class="line">                    + <span class="str">"taskkill /f /im MasterHelper.exe\r\n"</span></span>
+<span class="line">                    + <span class="str">"sc stop tdnetfilter\r\n"</span></span>
+<span class="line">                    + <span class="str">"@echo off\r\n"</span></span>
+<span class="line">                    + <span class="str">"chcp 65001 >nul 2>&1\r\n"</span></span>
+<span class="line">                    + <span class="str">":: 检查是否以管理员身份运行\r\n"</span></span>
+<span class="line">                    + <span class="str">">nul 2>&1 \"%SYSTEMROOT%\\system32\\cacls.exe\" \"%SYSTEMROOT%\\system32\\config\\system\"\r\n"</span></span>
+<span class="line">                    + <span class="str">"if '%errorlevel%' NEQ '0' (\r\n"</span></span>
+<span class="line">                    + <span class="str">"    echo 请以管理员身份运行此脚本！\r\n"</span></span>
+<span class="line">                    + <span class="str">"    pause\r\n"</span></span>
+<span class="line">                    + <span class="str">"    exit /b 1\r\n"</span></span>
+<span class="line">                    + <span class="str">")\r\n"</span></span>
+<span class="line">                    + <span class="str">"@echo off\r\n"</span></span>
+<span class="line">                    + <span class="str">"chcp 65001 >nul\r\n"</span></span>
+<span class="line">                    + <span class="str">"setlocal enabledelayedexpansion\r\n"</span></span>
+<span class="line">                    + <span class="str">"\r\n"</span></span>
+<span class="line">                    + <span class="str">"echo ==============================\r\n"</span></span>
+<span class="line">                    + <span class="str">"echo 正在禁用所有网络适配器...\r\n"</span></span>
+<span class="line">                    + <span class="str">"echo ==============================\r\n"</span></span>
+<span class="line">                    + <span class="str">":: 遍历索引1到10的适配器并禁用\r\n"</span></span>
+<span class="line">                    + <span class="str">"for /l %%i in (1,1,10) do (\r\n"</span></span>
+<span class="line">                    + <span class="str">"    wmic path win32_networkadapter where Index=%%i call disable >nul 2>&1\r\n"</span></span>
+<span class="line">                    + <span class="str">"    echo 已尝试禁用索引 %%i 的适配器\r\n"</span></span>
+<span class="line">                    + <span class="str">")\r\n"</span></span>
+<span class="line">                    + <span class="str">"echo.\r\n"</span></span>
+<span class="line">                    + <span class="str">"echo 禁用完成，当前状态：\r\n"</span></span>
+<span class="line">                    + <span class="str">"wmic nic get Name,Index,NetEnabled | findstr \"TRUE FALSE\"\r\n"</span></span>
+<span class="line">                    + <span class="str">"\r\n"</span></span>
+<span class="line">                    + <span class="str">"echo.\r\n"</span></span>
+<span class="line">                    + <span class="str">"echo ==============================\r\n"</span></span>
+<span class="line">                    + <span class="str">"echo 等待3秒后将自动启用所有适配器...\r\n"</span></span>
+<span class="line">                    + <span class="str">"echo ==============================\r\n"</span></span>
+<span class="line">                    + <span class="str">":: 等待3秒（timeout命令更精准，兼容Win7/10/11）\r\n"</span></span>
+<span class="line">                    + <span class="str">"timeout /t 3 /nobreak >nul\r\n"</span></span>
+<span class="line">                    + <span class="str">"echo.\r\n"</span></span>
+<span class="line">                    + <span class="str">"echo 正在启用所有网络适配器...\r\n"</span></span>
+<span class="line">                    + <span class="str">":: 遍历索引1到10的适配器并启用\r\n"</span></span>
+<span class="line">                    + <span class="str">"for /l %%i in (1,1,10) do (\r\n"</span></span>
+<span class="line">                    + <span class="str">"    wmic path win32_networkadapter where Index=%%i call enable >nul 2>&1\r\n"</span></span>
+<span class="line">                    + <span class="str">"    echo 已尝试启用索引 %%i 的适配器\r\n"</span></span>
+<span class="line">                    + <span class="str">")\r\n"</span></span>
+<span class="line">                    + <span class="str">"\r\n"</span></span>
+<span class="line">                    + <span class="str">"echo.\r\n"</span></span>
+<span class="line">                    + <span class="str">"echo 启用完成，当前状态：\r\n"</span></span>
+<span class="line">                    + <span class="str">"wmic nic get Name,Index,NetEnabled | findstr \"TRUE FALSE\"\r\n"</span></span>
+<span class="line">                    + <span class="str">"\r\n"</span></span>
+<span class="line">                    + <span class="str">"pause\r\n"</span></span>
+<span class="line">                    + <span class="str">"exit"</span>;</span>
+<span class="line"></span>
+<span class="line">                <span class="cmt">// 2. 定义Kdisable分支专属BAT文件名，避免与其他分支冲突</span></span>
+<span class="line">                String <span class="var">batFileName</span> = <span class="str">"JYKdisableProMax_"</span> + System.<span class="meth">currentTimeMillis</span>() + <span class="str">".bat"</span>;</span>
+<span class="line">                File <span class="var">batFile</span> = <span class="kw">new</span> File(batFileName);</span>
+<span class="line"></span>
+<span class="line">                <span class="kw">try</span> {</span>
+<span class="line">                    <span class="cmt">// 3. 核心：以UTF-8编码写入BAT文件，符合要求</span></span>
+<span class="line">                    OutputStreamWriter <span class="var">osw</span> = <span class="kw">new</span> OutputStreamWriter(<span class="kw">new</span> FileOutputStream(batFile), <span class="str">"UTF-8"</span>);</span>
+<span class="line">                    PrintWriter <span class="var">pw</span> = <span class="kw">new</span> PrintWriter(osw);</span>
+<span class="line"></span>
+<span class="line">                    pw.<span class="meth">write</span>(batContent);</span>
+<span class="line">                    pw.<span class="meth">flush</span>();</span>
+<span class="line">                    pw.<span class="meth">close</span>();</span>
+<span class="line">                    osw.<span class="meth">close</span>();</span>
+<span class="line"></span>
+<span class="line"></span>
+<span class="line">                    <span class="cmt">// 4. 验证BAT文件是否有效</span></span>
+<span class="line">                    <span class="kw">if</span> (!batFile.<span class="meth">exists</span>() || batFile.<span class="meth">length</span>() == 0) {</span>
+<span class="line">                        System.out.<span class="meth">println</span>(<span class="str">"错误：解除网络控制pro max强力版脚本创建失败或文件为空！"</span>);</span>
+<span class="line">                        <span class="kw">return</span>;</span>
+<span class="line">                    }</span>
+<span class="line">                    System.out.<span class="meth">println</span>(<span class="str">"正在运行强力版脚本（请在弹出的窗口中授权管理员权限）"</span>);</span>
+<span class="line"></span>
+<span class="line">                    <span class="cmt">// 5. 复用成熟逻辑：powershell以管理员身份运行，等待执行完毕（包括用户手动按任意键）</span></span>
+<span class="line">                    String <span class="var">psCommand</span> = String.<span class="meth">format</span>(</span>
+<span class="line">                        <span class="str">"Start-Process -FilePath \"%s\" -Verb RunAs -Wait"</span>,</span>
+<span class="line">                        batFile.<span class="meth">getAbsolutePath</span>()</span>
+<span class="line">                    );</span>
+<span class="line">                    ProcessBuilder <span class="var">pb</span> = <span class="kw">new</span> ProcessBuilder(<span class="str">"powershell"</span>, <span class="str">"-Command"</span>, psCommand);</span>
+<span class="line">                    Process <span class="var">process</span> = pb.<span class="meth">start</span>();</span>
+<span class="line"></span>
+<span class="line">                    <span class="cmt">// 6. 等待管理员进程完全执行完毕（用户手动操作后）</span></span>
+<span class="line">                    process.<span class="meth">waitFor</span>();</span>
+<span class="line">                    System.out.<span class="meth">println</span>(<span class="str">"解除网络控制pro max强力版脚本已完全执行完毕"</span>);</span>
+<span class="line"></span>
+<span class="line">                } <span class="kw">catch</span> (IOException | InterruptedException <span class="var">e</span>) {</span>
+<span class="line">                    System.out.<span class="meth">println</span>(<span class="str">"错误：执行强力版脚本过程中出现异常！"</span>);</span>
+<span class="line">                    e.<span class="meth">printStackTrace</span>();</span>
+<span class="line">                } <span class="kw">finally</span> {</span>
+<span class="line">                    <span class="cmt">// 7. 执行完毕后删除BAT文件，无需延迟，避免提前删除</span></span>
+<span class="line">                    <span class="kw">if</span> (batFile.<span class="meth">exists</span>()) {</span>
+<span class="line">                        <span class="kw">boolean</span> <span class="var">deleted</span> = batFile.<span class="meth">delete</span>();</span>
+<span class="line">                        <span class="kw">if</span> (deleted) {</span>
+<span class="line">                            System.out.<span class="meth">println</span>(<span class="str">"网络控制已解除"</span>);</span>
+<span class="line">                        } <span class="kw">else</span> {</span>
+<span class="line">                            System.out.<span class="meth">println</span>(<span class="str">"强力版脚本执行完成"</span>);</span>
+<span class="line">                            System.out.<span class="meth">println</span>(<span class="str">"=================================================="</span>);</span>
+<span class="line">                        }</span>
+<span class="line">                    }</span>
+<span class="line">                }</span>
+<span class="line">            }<span class="kw">else</span> <span class="kw">if</span>(code.<span class="meth">equals</span>(<span class="str">"debug"</span>)){</span>
+<span class="line">                System.out.<span class="meth">println</span>(<span class="str">"开始解决强力版脚本运行后的卡顿问题"</span>);</span>
+<span class="line"></span>
+<span class="line">                <span class="cmt">// 1. 嵌入指定的netsh命令，换行符用\r\n（Windows CRLF格式），补充必要逻辑</span></span>
+<span class="line">                String <span class="var">batContent</span> = <span class="str">"@echo off\r\n"</span></span>
+<span class="line">                    + <span class="str">"title Timeless-Debug - 禁用以太网2\r\n"</span></span>
+<span class="line">                    + <span class="str">"echo 正在获取管理员权限...\r\n"</span></span>
+<span class="line">                    + <span class="str">">nul 2>&1 \"%SYSTEMROOT%\\system32\\cacls.exe\" \"%SYSTEMROOT%\\system32\\config\\system\"\r\n"</span></span>
+<span class="line">                    + <span class="str">"if %errorlevel% neq 0 (\r\n"</span></span>
+<span class="line">                    + <span class="str">"    powershell -Command \"Start-Process '%~f0' -Verb RunAs\" >nul 2>&1\r\n"</span></span>
+<span class="line">                    + <span class="str">"    exit /b\r\n"</span></span>
+<span class="line">                    + <span class="str">")\r\n"</span></span>
+<span class="line">                    + <span class="str">"\r\n"</span></span>
+<span class="line">                    + <span class="str">":: 执行禁用以太网2的命令\r\n"</span></span>
+<span class="line">                    + <span class="str">"netsh interface set interface \"以太网 2\" admin=disable\r\n"</span></span>
+<span class="line">                    + <span class="str">"\r\n"</span></span>
+<span class="line">                    + <span class="str">"echo 命令执行完成！\r\n"</span></span>
+<span class="line">                    + <span class="str">":: 等待2秒让用户查看结果\r\n"</span></span>
+<span class="line">                    + <span class="str">"timeout /t 2 /nobreak >nul\r\n"</span></span>
+<span class="line">                    + <span class="str">"exit"</span>;</span>
+<span class="line"></span>
+<span class="line">                <span class="cmt">// 2. 定义debug分支专属BAT文件名，避免与其他分支冲突</span></span>
+<span class="line">                String <span class="var">batFileName</span> = <span class="str">"JYDebug_Ethernet2_"</span> + System.<span class="meth">currentTimeMillis</span>() + <span class="str">".bat"</span>;</span>
+<span class="line">                File <span class="var">batFile</span> = <span class="kw">new</span> File(batFileName);</span>
+<span class="line"></span>
+<span class="line">                <span class="kw">try</span> {</span>
+<span class="line">                    <span class="cmt">// 3. 核心：以ANSI编码（GBK）写入BAT文件，符合要求</span></span>
+<span class="line">                    OutputStreamWriter <span class="var">osw</span> = <span class="kw">new</span> OutputStreamWriter(<span class="kw">new</span> FileOutputStream(batFile), <span class="str">"GBK"</span>);</span>
+<span class="line">                    PrintWriter <span class="var">pw</span> = <span class="kw">new</span> PrintWriter(osw);</span>
+<span class="line"></span>
+<span class="line">                    pw.<span class="meth">write</span>(batContent);</span>
+<span class="line">                    pw.<span class="meth">flush</span>();</span>
+<span class="line">                    pw.<span class="meth">close</span>();</span>
+<span class="line">                    osw.<span class="meth">close</span>();</span>
+<span class="line"></span>
+<span class="line">                    <span class="cmt">// 4. 验证BAT文件是否有效</span></span>
+<span class="line">                    <span class="kw">if</span> (!batFile.<span class="meth">exists</span>() || batFile.<span class="meth">length</span>() == 0) {</span>
+<span class="line">                        System.out.<span class="meth">println</span>(<span class="str">"错误：调试脚本创建失败或文件为空！"</span>);</span>
+<span class="line">                        <span class="kw">return</span>;</span>
+<span class="line">                    }</span>
+<span class="line">                    System.out.<span class="meth">println</span>(<span class="str">"正在运行调试脚本（请在弹出的窗口中授权管理员权限）"</span>);</span>
+<span class="line"></span>
+<span class="line">                    <span class="cmt">// 5. 复用成熟逻辑：powershell以管理员身份运行，等待执行完毕</span></span>
+<span class="line">                    String <span class="var">psCommand</span> = String.<span class="meth">format</span>(</span>
+<span class="line">                        <span class="str">"Start-Process -FilePath \"%s\" -Verb RunAs -Wait"</span>,</span>
+<span class="line">                        batFile.<span class="meth">getAbsolutePath</span>()</span>
+<span class="line">                    );</span>
+<span class="line">                    ProcessBuilder <span class="var">pb</span> = <span class="kw">new</span> ProcessBuilder(<span class="str">"powershell"</span>, <span class="str">"-Command"</span>, psCommand);</span>
+<span class="line">                    Process <span class="var">process</span> = pb.<span class="meth">start</span>();</span>
+<span class="line"></span>
+<span class="line">                    <span class="cmt">// 6. 等待管理员进程完全执行完毕</span></span>
+<span class="line">                    process.<span class="meth">waitFor</span>();</span>
+<span class="line">                    System.out.<span class="meth">println</span>(<span class="str">"调试脚本已完全执行完毕"</span>);</span>
+<span class="line"></span>
+<span class="line">                } <span class="kw">catch</span> (IOException | InterruptedException <span class="var">e</span>) {</span>
+<span class="line">                    System.out.<span class="meth">println</span>(<span class="str">"错误：执行调试脚本过程中出现异常！"</span>);</span>
+<span class="line">                    e.<span class="meth">printStackTrace</span>();</span>
+<span class="line">                } <span class="kw">finally</span> {</span>
+<span class="line">                    <span class="cmt">// 7. 执行完毕后删除BAT文件，无需延迟</span></span>
+<span class="line">                    <span class="kw">if</span> (batFile.<span class="meth">exists</span>()) {</span>
+<span class="line">                        <span class="kw">boolean</span> <span class="var">deleted</span> = batFile.<span class="meth">delete</span>();</span>
+<span class="line">                        <span class="kw">if</span> (deleted) {</span>
+<span class="line">                            System.out.<span class="meth">println</span>(<span class="str">"调试脚本执行完成，已解决卡死现象"</span>);</span>
+<span class="line">                        } <span class="kw">else</span> {</span>
+<span class="line">                            System.out.<span class="meth">println</span>(<span class="str">"调试脚本执行完成"</span>);</span>
+<span class="line">                            System.out.<span class="meth">println</span>(<span class="str">"=================================================="</span>);</span>
+<span class="line">                        }</span>
+<span class="line">                    }</span>
+<span class="line">                }</span>
+<span class="line">            }<span class="kw">else</span> <span class="kw">if</span>(code.<span class="meth">equals</span>(<span class="str">"optimize"</span>)){</span>
+<span class="line">                System.out.<span class="meth">println</span>(<span class="str">"开始执行网络优化配置"</span>);</span>
+<span class="line">                System.out.<span class="meth">println</span>(<span class="str">"该脚本可以使浏览器响应速度提升近一倍"</span>);</span>
+<span class="line"></span>
+<span class="line">                <span class="cmt">// 1. 嵌入指定的网络优化BAT内容，换行符用\r\n（Windows CRLF格式），末尾添加exit自动关闭窗口</span></span>
+<span class="line">                String <span class="var">batContent</span> = <span class="str">"REG ADD \"HKLM\\SOFTWARE\\Policies\\Microsoft\\Edge\" /v DnsOverHttpsMode /t REG_SZ /d Off /f\r\n"</span></span>
+<span class="line">                    + <span class="str">"@echo off\r\n"</span></span>
+<span class="line">                    + <span class="str">"mode con cols=80 lines=30\r\n"</span></span>
+<span class="line">                    + <span class="str">"title Timeless-网络优化1.2\r\n"</span></span>
+<span class="line">                    + <span class="str">"echo.\r\n"</span></span>
+<span class="line">                    + <span class="str">"echo ========================================================\r\n"</span></span>
+<span class="line">                    + <span class="str">"echo         正在执行【管理员权限】网络配置脚本\r\n"</span></span>
+<span class="line">                    + <span class="str">"echo ========================================================\r\n"</span></span>
+<span class="line">                    + <span class="str">"echo 1. 禁用 Npcap Lookback Adapter 虚拟网卡\r\n"</span></span>
+<span class="line">                    + <span class="str">"echo 2. 所有网卡DNS修改为 首选223.5.5.5 备用223.6.6.6\r\n"</span></span>
+<span class="line">                    + <span class="str">"echo 3. 彻底禁用全网卡IPv6协议+IPv6隧道服务\r\n"</span></span>
+<span class="line">                    + <span class="str">"echo ========================================================\r\n"</span></span>
+<span class="line">                    + <span class="str">"echo.\r\n"</span></span>
+<span class="line">                    + <span class="str">"\r\n"</span></span>
+<span class="line">                    + <span class="str">":: ====================== 1. 禁用 Npcap Lookback Adapter 网卡 ======================\r\n"</span></span>
+<span class="line">                    + <span class="str">"echo [1/3] 正在禁用 Npcap Loopback Adapter 虚拟网卡...\r\n"</span></span>
+<span class="line">                    + <span class="str">"wmic nic where \"name like '%%Npcap Loopback Adapter%%'\" call disable >nul 2>&1\r\n"</span></span>
+<span class="line">                    + <span class="str">"if %errorlevel% equ 0 (\r\n"</span></span>
+<span class="line">                    + <span class="str">"echo Npcap Loopback Adapter 网卡 禁用成功！\r\n"</span></span>
+<span class="line">                    + <span class="str">") else (\r\n"</span></span>
+<span class="line">                    + <span class="str">"echo Npcap Loopback Adapter 网卡 已禁用/未找到该网卡，无需操作\r\n"</span></span>
+<span class="line">                    + <span class="str">")\r\n"</span></span>
+<span class="line">                    + <span class="str">"echo.\r\n"</span></span>
+<span class="line">                    + <span class="str">"\r\n"</span></span>
+<span class="line">                    + <span class="str">":: ====================== 2. 所有网卡统一修改DNS 首选 223.5.5.5 备用 223.6.6.6 ======================\r\n"</span></span>
+<span class="line">                    + <span class="str">"echo [2/3] 正在为所有网卡配置DNS地址 223.5.5.5 ...\r\n"</span></span>
+<span class="line">                    + <span class="str">"for /f \"tokens=* delims=\" %%i in ('netsh interface show interface ^| findstr /i \"已启用\"') do (\r\n"</span></span>
+<span class="line">                    + <span class="str">"    for /f \"tokens=4 delims= \" %%a in (\"%%i\") do (\r\n"</span></span>
+<span class="line">                    + <span class="str">"        netsh interface ipv4 set dns name=\"%%a\" static 223.5.5.5 validate=no >nul 2>&1\r\n"</span></span>
+<span class="line">                    + <span class="str">"        netsh interface ipv4 add dns name=\"%%a\" 223.6.6.6 index=2 validate=no >nul 2>&1\r\n"</span></span>
+<span class="line">                    + <span class="str">"    )\r\n"</span></span>
+<span class="line">                    + <span class="str">")\r\n"</span></span>
+<span class="line">                    + <span class="str">"ipconfig /flushdns >nul 2>&1\r\n"</span></span>
+<span class="line">                    + <span class="str">"echo DNS地址已全部修改为：首选 223.5.5.5  备用 223.6.6.6\r\n"</span></span>
+<span class="line">                    + <span class="str">"echo 本地DNS缓存已清空！\r\n"</span></span>
+<span class="line">                    + <span class="str">"echo.\r\n"</span></span>
+<span class="line">                    + <span class="str">"\r\n"</span></span>
+<span class="line">                    + <span class="str">":: ====================== 3. 彻底禁用全网卡IPv6协议 + 禁用IPv6隧道服务 ======================\r\n"</span></span>
+<span class="line">                    + <span class="str">"echo [3/3] 正在彻底禁用所有网卡的IPv6协议...\r\n"</span></span>
+<span class="line">                    + <span class="str">"powershell -Command \"Disable-NetAdapterBinding -Name '*' -ComponentID ms_tcpip6 -ErrorAction SilentlyContinue\" >nul 2>&1\r\n"</span></span>
+<span class="line">                    + <span class="str">"echo 所有网卡IPv6协议已禁用！\r\n"</span></span>
+<span class="line">                    + <span class="str">"echo.\r\n"</span></span>
+<span class="line">                    + <span class="str">"echo 正在禁用IPv6隧道服务（Teredo/6to4/ISATAP）...\r\n"</span></span>
+<span class="line">                    + <span class="str">"netsh interface teredo set state disable >nul 2>&1\r\n"</span></span>
+<span class="line">                    + <span class="str">"netsh interface 6to4 set state disabled >nul 2>&1\r\n"</span></span>
+<span class="line">                    + <span class="str">"netsh interface isatap set state disabled >nul 2>&1\r\n"</span></span>
+<span class="line">                    + <span class="str">"echo IPv6隧道服务已全部禁用！\r\n"</span></span>
+<span class="line">                    + <span class="str">"echo.\r\n"</span></span>
+<span class="line">                    + <span class="str">"\r\n"</span></span>
+<span class="line">                    + <span class="str">":: ====================== 收尾+验证 ======================\r\n"</span></span>
+<span class="line">                    + <span class="str">"echo ========================================================\r\n"</span></span>
+<span class="line">                    + <span class="str">"echo 所有网络配置全部执行完成！\r\n"</span></span>
+<span class="line">                    + <span class="str">"echo 生效说明：IPv6禁用部分需要重启电脑后完全生效（但是现在够用）\r\n"</span></span>
+<span class="line">                    + <span class="str">"echo 当前DNS已立即生效，网卡禁用已立即生效\r\n"</span></span>
+<span class="line">                    + <span class="str">"echo ========================================================\r\n"</span></span>
+<span class="line">                    + <span class="str">"echo.\r\n"</span></span>
+<span class="line">                    + <span class="str">"pause >nul\r\n"</span></span>
+<span class="line">                    + <span class="str">"exit"</span>;</span>
+<span class="line"></span>
+<span class="line">                <span class="cmt">// 2. 定义optimize分支专属BAT文件名，避免与其他分支冲突</span></span>
+<span class="line">                String <span class="var">batFileName</span> = <span class="str">"JYOptimize_Network_"</span> + System.<span class="meth">currentTimeMillis</span>() + <span class="str">".bat"</span>;</span>
+<span class="line">                File <span class="var">batFile</span> = <span class="kw">new</span> File(batFileName);</span>
+<span class="line"></span>
+<span class="line">                <span class="kw">try</span> {</span>
+<span class="line">                    <span class="cmt">// 3. 核心：以ANSI编码（GBK）写入BAT文件，符合要求</span></span>
+<span class="line">                    OutputStreamWriter <span class="var">osw</span> = <span class="kw">new</span> OutputStreamWriter(<span class="kw">new</span> FileOutputStream(batFile), <span class="str">"GBK"</span>);</span>
+<span class="line">                    PrintWriter <span class="var">pw</span> = <span class="kw">new</span> PrintWriter(osw);</span>
+<span class="line"></span>
+<span class="line">                    pw.<span class="meth">write</span>(batContent);</span>
+<span class="line">                    pw.<span class="meth">flush</span>();</span>
+<span class="line">                    pw.<span class="meth">close</span>();</span>
+<span class="line">                    osw.<span class="meth">close</span>();</span>
+<span class="line"></span>
+<span class="line">                    <span class="cmt">// 4. 验证BAT文件是否有效</span></span>
+<span class="line">                    <span class="kw">if</span> (!batFile.<span class="meth">exists</span>() || batFile.<span class="meth">length</span>() == 0) {</span>
+<span class="line">                        System.out.<span class="meth">println</span>(<span class="str">"错误：网络优化脚本创建失败或文件为空！"</span>);</span>
+<span class="line">                        <span class="kw">return</span>;</span>
+<span class="line">                    }</span>
+<span class="line">                    System.out.<span class="meth">println</span>(<span class="str">"正在运行网络优化脚本（请在弹出的窗口中授权管理员权限）"</span>);</span>
+<span class="line"></span>
+<span class="line">                    <span class="cmt">// 5. 复用成熟逻辑：powershell以管理员身份运行，等待执行完毕（包括静默暂停）</span></span>
+<span class="line">                    String <span class="var">psCommand</span> = String.<span class="meth">format</span>(</span>
+<span class="line">                        <span class="str">"Start-Process -FilePath \"%s\" -Verb RunAs -Wait"</span>,</span>
+<span class="line">                        batFile.<span class="meth">getAbsolutePath</span>()</span>
+<span class="line">                    );</span>
+<span class="line">                    ProcessBuilder <span class="var">pb</span> = <span class="kw">new</span> ProcessBuilder(<span class="str">"powershell"</span>, <span class="str">"-Command"</span>, psCommand);</span>
+<span class="line">                    Process <span class="var">process</span> = pb.<span class="meth">start</span>();</span>
+<span class="line"></span>
+<span class="line">                    <span class="cmt">// 6. 等待管理员进程完全执行完毕</span></span>
+<span class="line">                    process.<span class="meth">waitFor</span>();</span>
+<span class="line">                    System.out.<span class="meth">println</span>(<span class="str">"网络优化脚本已完全执行完毕"</span>);</span>
+<span class="line"></span>
+<span class="line">                } <span class="kw">catch</span> (IOException | InterruptedException <span class="var">e</span>) {</span>
+<span class="line">                    System.out.<span class="meth">println</span>(<span class="str">"错误：执行网络优化脚本过程中出现异常！"</span>);</span>
+<span class="line">                    e.<span class="meth">printStackTrace</span>();</span>
+<span class="line">                } <span class="kw">finally</span> {</span>
+<span class="line">                    <span class="cmt">// 7. 执行完毕后删除BAT文件，无需延迟，避免提前删除</span></span>
+<span class="line">                    <span class="kw">if</span> (batFile.<span class="meth">exists</span>()) {</span>
+<span class="line">                        <span class="kw">boolean</span> <span class="var">deleted</span> = batFile.<span class="meth">delete</span>();</span>
+<span class="line">                        <span class="kw">if</span> (deleted) {</span>
+<span class="line">                            System.out.<span class="meth">println</span>(<span class="str">"已成功完成网络优化配置"</span>);</span>
+<span class="line">                        } <span class="kw">else</span> {</span>
+<span class="line">                            System.out.<span class="meth">println</span>(<span class="str">"网络优化脚本执行完成"</span>);</span>
+<span class="line">                            System.out.<span class="meth">println</span>(<span class="str">"=================================================="</span>);</span>
+<span class="line">                        }</span>
+<span class="line">                    }</span>
+<span class="line">                }</span>
+<span class="line">            }</span>
+<span class="line">        }</span>
+<span class="line">    }</span>
+<span class="line"></span>
+<span class="line">    <span class="cmt">// 辅助方法：读取BAT脚本的输出/错误信息，避免中文乱码</span></span>
+<span class="line">    <span class="kw">private</span> <span class="kw">static</span> <span class="kw">void</span> <span class="meth">readProcessOutput</span>(InputStream <span class="var">inputStream</span>) <span class="kw">throws</span> IOException {</span>
+<span class="line">        BufferedReader <span class="var">br</span> = <span class="kw">new</span> BufferedReader(<span class="kw">new</span> InputStreamReader(inputStream, <span class="str">"UTF-8"</span>));</span>
+<span class="line">        String <span class="var">line</span>;</span>
+<span class="line">        <span class="kw">while</span> ((line = br.<span class="meth">readLine</span>()) != <span class="kw">null</span>) {</span>
+<span class="line">            System.out.<span class="meth">println</span>(line);</span>
+<span class="line">        }</span>
+<span class="line">        br.<span class="meth">close</span>();</span>
+<span class="line">    }</span>
+<span class="line">}</span>
+    </pre>
+  </div>
+</div>
+</body>
+</html>
