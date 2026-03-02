@@ -54,6 +54,37 @@
     background-color: #555; /* 浅灰hover效果 */
   }
 
+  /* 新增：抽屉提示样式 */
+  .drawer-container {
+    position: relative;
+    display: inline-block;
+  }
+  
+  .drawer-tip {
+    position: absolute;
+    top: 0;
+    left: 100%;
+    margin-left: 10px;
+    width: 100px;
+    height: 40px;
+    line-height: 40px;
+    background-color: #555;
+    color: #fff;
+    text-align: center;
+    border-radius: 4px;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateX(-10px);
+    transition: all 0.3s ease;
+    z-index: 100;
+  }
+  
+  .drawer-container:hover .drawer-tip {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(0);
+  }
+
   /* 代码容器样式（保证左对齐、适配行号） */
   .code-container {
     width: 85%;
@@ -189,14 +220,61 @@
 <body>
 <div class="container">
   <h1>集成化极域破解脚本</h1>
-  <p><!-- 下载按钮 -->
-    <a href="exe/setup.exe" download="setup.exe" class="download-btn">下载</a>
+  <p>&nbsp;</p>
+  <p>&nbsp;</p>
+  <table width="100%" border="0" cellspacing="0" cellpadding="0">
+    <tbody>
+      <tr>
+        <td colspan="3" bgcolor="#EEEEEE">国内源下载</td>
+      </tr>
+      <tr>
+        <td width="48%" align="right" bgcolor="#EEEEEE">  <p><!-- 下载按钮 -->
+    <a href="exe/setup.exe" download="setup.exe" class="download-btn">在本站下载</a>
+  </p></td>
+        <td align="center" bgcolor="#EEEEEE">&nbsp;</td>
+        <td width="48%" align="left" bgcolor="#EEEEEE"><p>
+          <!-- 修改这里：添加抽屉容器 -->
+          <div class="drawer-container">
+            <a href="https://wwamt.lanzout.com/iksiS3jnq3di" id="d" class="download-btn">lzy下载</a>
+            <span class="drawer-tip">提取码:43m2</span>
+          </div>
+          <!-- 隐藏原有的提取码按钮 -->
+          <!-- <a href="#" class="download-btn">提取码：43m2</a> -->
+          </p>
+          <p>&nbsp;</p>
+          <p>&nbsp;</p></td>
+      </tr>
+      <tr>
+        <td colspan="3" bgcolor="#EEEEEE">海外源下载</td>
+      </tr>
+      <tr>
+        <td colspan="3" bgcolor="#EEEEEE" id="1"><a href="https://mypikpak.com/s/VOmjf_SWuKzsUdw30vqU7Q1eo2" class="download-btn">在pikpak上下载</a></td>
+      </tr>
+    </tbody>
+  </table>
+  <p>&nbsp;</p>
+  <p>&nbsp;</p>
+  <p>&nbsp;</p>
+  <p>&nbsp;</p>
+  <p>&nbsp;</p>
+  <p>&nbsp;</p>
+  <p>&nbsp;</p>
+  <p>&nbsp;</p>
+  <p>&nbsp;</p>
+  <p>&nbsp;</p>
+  <p>&nbsp;</p>
+  <p>&nbsp;</p>
+  <p>↓开源内容↓</p>
+  <p>&nbsp;</p>
+  <p>&nbsp;</p>
+  <p>&nbsp;</p>
+  <p>&nbsp;</p>
+  <p>&nbsp;</p>
+  <p><br>
   </p>
-  <p><font size="+2" color="#FF0004">不要安装在默认位置，要更改到其它位置，不要安装在C盘，否则会权限不足无法运行</font>
-    
-    <!-- 介绍文本（居中对齐） -->
+  <p><!-- 介绍文本（居中对齐） -->
   </p>
-  <p class="intro-text">
+  <p class="intro-text" id="2">
     这是一个由我自己耗时7小时开发出来的程序，从源代码--编译--打包--制作exe--制作安装包等全流程都是由我一人完成的。<br>
     使用java语言，五百九十多行代码。Java和计算机网络专业所学的C语言是不一样的，不只是在编译和打包上。java想要从源代码<br>
     成为一个可执行文件（.exe文件）是要经历数个繁琐的过程。首先写出java源代码文件（.java）后，再使用终端指令（cmd）进行<br>
@@ -402,6 +480,7 @@
 <span class="line">                        <span class="kw">if</span> (trimLine.<span class="meth">contains</span>(regItem)) {</span>
 <span class="line">                            String[] <span class="var">parts</span> = trimLine.<span class="meth">split</span>(<span class="str">"\\s+"</span>);</span>
 <span class="line">                            <span class="kw">if</span> (parts.length >= 3) {</span>
+
 <span class="line">                                resultData = parts[parts.length - 1];</span>
 <span class="line">                            }</span>
 <span class="line">                            <span class="kw">break</span>;</span>
