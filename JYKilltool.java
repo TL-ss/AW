@@ -18,7 +18,7 @@ public class JYKilltool {
         System.out.println("             ╭───╮ ╭───╮ ╭───╮ ╭───╮");
         System.out.println("             │ J │ │ Y │ │ K │ │ T │");
         System.out.println("             ╰───╯ ╰───╯ ╰───╯ ╰───╯");
-        System.out.println("             集成化极域破解工具V 2.1.0");
+        System.out.println("            集成化极域破解工具V 26.4.0");
         System.out.println("                    Timeless");
         System.out.println("  下载地址 五中资源网：https://tl-ss.github.io/AW");
         System.out.println("==================================================");
@@ -327,6 +327,7 @@ public class JYKilltool {
                         + "sc stop HotkeyServiceDSU\r\n"
                         + "sc stop \"HP Comm Recover\"\r\n"
                         + "sc stop hp-one-agent-service\r\n"
+	        + "taskkill /f /im iConsoleSec.exe\r\n"
                         + "taskkill /f /im HotkeyServiceDSU.exe\r\n"
                         + "taskkill /f /im hp-one-agent-service.exe\r\n"
                         + "taskkill /f /im iClient.exe\r\n"
