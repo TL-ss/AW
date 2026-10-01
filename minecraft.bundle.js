@@ -9443,7 +9443,8 @@ var __mc = window.__mc;
       this.updateTarget();
 
       if (intent.attack) {
-        this._attack();
+        const hit = this._attack(!intent.placeOnMiss);
+        if (hit === false && intent.placeOnMiss) this._place();
         return;
       }
       if (intent.mine) this._mine(dt);
@@ -9457,13 +9458,15 @@ var __mc = window.__mc;
       this.breakKey = null;
     }
 
-    _attack() {
-      if (this.swingTime > 0) return;
+    _attack(playMissSound = true) {
+      if (this.swingTime > 0) return null;
       this.swingTime = 0.28;
       if (this.mobs?.attackFrom(this.player, 3.4, 4)) {
         this.playSound('mob.hurt', { rate: 1.1 });
+        return true;
       } else {
-        this.playSound('click', { volume: 0.15 });
+        if (playMissSound) this.playSound('click', { volume: 0.15 });
+        return false;
       }
     }
 
@@ -9861,7 +9864,7 @@ var __mc = window.__mc;
       if (kind === 'title') {
         ui.menuTitle.textContent = '我的世界 · 网页版';
         ui.menuBody.innerHTML = `
-          <p>用 WebGL2 从零写的体素沙盒，单文件即可运行，不需要服务器。</p>
+          <p>用 WebGL2 从零写的体素沙盒（手机端需要自己将手机横屏）</p>
           <p class="dim">世界种子：${this.seed}</p>`;
         this._addButton('开始游戏', () => this.resume());
         this._addButton('读取存档', () => {
@@ -10527,10 +10530,16 @@ var __mc = window.__mc;
 
       // 左键在够得着生物时是攻击，否则是挖掘。
       const mining = input.mouseButton(0);
-      const placing = input.mouseButton(2) || this._touchPlaceTimer > 0;
-      this._touchPlaceTimer = Math.max(0, this._touchPlaceTimer - dt);
+      const touchTap = this.isMobile && this._touchPlaceTimer > 0;
+      const placing = input.mouseButton(2) || touchTap;
       const aimingAtMob = mining && !!this.mobs.nearest(player, 3.4);
-      this.interaction.update({ mine: mining && !aimingAtMob, place: placing, attack: aimingAtMob }, dt);
+      this.interaction.update({
+        mine: mining && !aimingAtMob,
+        place: placing,
+        attack: (aimingAtMob && !this.isMobile) || touchTap,
+        placeOnMiss: touchTap,
+      }, dt);
+      this._touchPlaceTimer = touchTap ? 0 : Math.max(0, this._touchPlaceTimer - dt);
 
       for (const button of input.consumeClicks()) {
         if (button === 1 && this.interaction.target) {
@@ -10852,14 +10861,34 @@ var __mc = window.__mc;
       instance.resume();
 
       const input = instance.input;
+      const interaction = instance.interaction;
+      const savedInteractionMethods = {
+        updateTarget: interaction.updateTarget,
+        attack: interaction._attack,
+        place: interaction._place,
+      };
+      let tapFallbackPlaces = 0;
+      interaction.updateTarget = () => {};
+      interaction._attack = () => false;
+      interaction._place = () => { tapFallbackPlaces++; };
+      interaction.update({ mine: false, attack: true, place: true, placeOnMiss: true }, 0);
+      const tapMissPlaces = tapFallbackPlaces === 1;
+      interaction._attack = () => true;
+      interaction.update({ mine: false, attack: true, place: true, placeOnMiss: true }, 0);
+      record('mobile-tap-attack-placement', tapMissPlaces && tapFallbackPlaces === 1,
+        '点击命中攻击，未命中仍放置');
+      interaction.updateTarget = savedInteractionMethods.updateTarget;
+      interaction._attack = savedInteractionMethods.attack;
+      interaction._place = savedInteractionMethods.place;
+
       const sensitivityControl = instance.ui.sensitivity;
       const initialSensitivity = instance.sensitivity;
-      sensitivityControl.value = '3.5';
+      sensitivityControl.value = '20';
       sensitivityControl.dispatchEvent(new Event('input', { bubbles: true }));
-      record('sensitivity-scale', Math.abs(instance.sensitivity - 0.0035) < 1e-9
-        && sensitivityControl.value === '3.5'
-        && document.getElementById('opt-sensitivity-value').textContent === '3.5',
-      '选项值 3.5 对应 0.0035 rad/px');
+      record('sensitivity-scale', Math.abs(instance.sensitivity - 0.02) < 1e-9
+        && sensitivityControl.value === '20'
+        && document.getElementById('opt-sensitivity-value').textContent === '20.0',
+      '选项上限 20 对应 0.02 rad/px');
       sensitivityControl.value = (initialSensitivity * 1000).toFixed(1);
       sensitivityControl.dispatchEvent(new Event('input', { bubbles: true }));
 

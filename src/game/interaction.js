@@ -59,7 +59,8 @@ export class Interaction {
     this.updateTarget();
 
     if (intent.attack) {
-      this._attack();
+      const hit = this._attack(!intent.placeOnMiss);
+      if (hit === false && intent.placeOnMiss) this._place();
       return;
     }
     if (intent.mine) this._mine(dt);
@@ -73,13 +74,15 @@ export class Interaction {
     this.breakKey = null;
   }
 
-  _attack() {
-    if (this.swingTime > 0) return;
+  _attack(playMissSound = true) {
+    if (this.swingTime > 0) return null;
     this.swingTime = 0.28;
     if (this.mobs?.attackFrom(this.player, 3.4, 4)) {
       this.playSound('mob.hurt', { rate: 1.1 });
+      return true;
     } else {
-      this.playSound('click', { volume: 0.15 });
+      if (playMissSound) this.playSound('click', { volume: 0.15 });
+      return false;
     }
   }
 
