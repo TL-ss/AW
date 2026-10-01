@@ -331,6 +331,8 @@ ul.controls span { color: var(--dim); }
   text-shadow: 1px 1px 0 #000;
 }
 
+body.mobile-device #debug { top: 54px; }
+
 #version {
   position: fixed;
   top: 8px;
@@ -409,13 +411,21 @@ body.hud-hidden #hint { display: none !important; }
   right: max(82px, calc(env(safe-area-inset-right) + 82px));
 }
 
+.mobile-debug {
+  top: max(12px, env(safe-area-inset-top));
+  left: max(12px, env(safe-area-inset-left));
+  width: 42px;
+  height: 42px;
+  font-size: 12px;
+}
+
 .mobile-pause {
   top: max(18px, env(safe-area-inset-top));
   right: max(18px, env(safe-area-inset-right));
 }
 
-.mobile-sneak { right: max(80px, calc(env(safe-area-inset-right) + 80px)); bottom: max(26px, calc(env(safe-area-inset-bottom) + 26px)); }
-.mobile-jump { right: max(18px, env(safe-area-inset-right)); bottom: max(26px, calc(env(safe-area-inset-bottom) + 26px)); }
+.mobile-sneak { right: max(20px, env(safe-area-inset-right)); bottom: max(24px, calc(env(safe-area-inset-bottom) + 24px)); }
+.mobile-jump { right: max(20px, env(safe-area-inset-right)); bottom: max(94px, calc(env(safe-area-inset-bottom) + 94px)); }
 
 .mobile-button:active { filter: brightness(1.3); }
 

@@ -9798,6 +9798,11 @@ var __mc = window.__mc;
       }
     }
 
+    _toggleDebug() {
+      this.showDebug = !this.showDebug;
+      this.ui.debug.classList.toggle('hidden', !this.showDebug);
+    }
+
     /**
      * 让玩家落到地面上，并等到附近区块真正完成网格化。
      *
@@ -9864,7 +9869,7 @@ var __mc = window.__mc;
       if (kind === 'title') {
         ui.menuTitle.textContent = '我的世界 · 网页版';
         ui.menuBody.innerHTML = `
-          <p>用 WebGL2 从零写的体素沙盒（手机端需要自己将手机横屏）</p>
+          <p>用 WebGL2 从零写的体素沙盒（手机端开启全屏后会自动横屏）</p>
           <p class="dim">世界种子：${this.seed}</p>`;
         this._addButton('开始游戏', () => this.resume());
         this._addButton('读取存档', () => {
@@ -10237,8 +10242,7 @@ var __mc = window.__mc;
           this.openInventory();
           break;
         case 'F3':
-          this.showDebug = !this.showDebug;
-          this.ui.debug.classList.toggle('hidden', !this.showDebug);
+          this._toggleDebug();
           break;
         case 'KeyF':
           if (this.player.gameMode === 'creative') {
@@ -10360,6 +10364,8 @@ var __mc = window.__mc;
         ?.addEventListener('click', () => this.openInventory());
       this.ui.mobileControls.querySelector('[data-touch-action="pause"]')
         ?.addEventListener('click', () => this.showMenu('pause'));
+      this.ui.mobileControls.querySelector('[data-touch-action="debug"]')
+        ?.addEventListener('click', () => this._toggleDebug());
 
       const joystick = this.ui.joystick;
       joystick?.addEventListener('pointerdown', (event) => {
@@ -10859,6 +10865,25 @@ var __mc = window.__mc;
       record('fullscreen-menu-button', !!fullscreenButton && fullscreenButton.textContent === '全屏',
         '菜单包含全屏切换按钮');
       instance.resume();
+
+      const wasMobile = instance.isMobile;
+      instance.isMobile = true;
+      instance._updateMobileControls();
+      const mobileDebugButton = instance.ui.mobileControls.querySelector('[data-touch-action="debug"]');
+      const debugWasVisible = instance.showDebug;
+      mobileDebugButton?.click();
+      const debugToggled = instance.showDebug !== debugWasVisible
+        && instance.ui.debug.classList.contains('hidden') === debugWasVisible;
+      const jumpRect = instance.ui.mobileControls.querySelector('.mobile-jump').getBoundingClientRect();
+      const sneakRect = instance.ui.mobileControls.querySelector('.mobile-sneak').getBoundingClientRect();
+      record('mobile-debug-and-layout', !!mobileDebugButton
+        && mobileDebugButton.textContent === 'F3'
+        && debugToggled
+        && jumpRect.top < sneakRect.top,
+      'F3 触控可切换调试，跳跃按钮位于潜行上方');
+      instance.isMobile = wasMobile;
+      if (instance.showDebug !== debugWasVisible) instance._toggleDebug();
+      instance._updateMobileControls();
 
       const input = instance.input;
       const interaction = instance.interaction;
