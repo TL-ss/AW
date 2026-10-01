@@ -68,6 +68,8 @@ export class Game {
     this._touchPlaceTimer = 0;
     this._joystickPointer = null;
     this._previousPlayerPosition = null;
+    this._fullscreenButton = null;
+    document.addEventListener('fullscreenchange', () => this._syncFullscreenButton());
 
     // ?seed=123 可以固定世界种子，便于复现问题与截图。
     const seedParam = new URLSearchParams(location.search).get('seed');
@@ -263,7 +265,7 @@ export class Game {
     if (kind === 'title') {
       ui.menuTitle.textContent = '我的世界 · 网页版';
       ui.menuBody.innerHTML = `
-        <p>用 WebGL2 从零写的体素沙盒，单文件即可运行，不需要服务器。</p>
+        <p>用 WebGL2 从零写的体素沙盒</p>
         <p class="dim">世界种子：${this.seed}</p>`;
       this._addButton('开始游戏', () => this.resume());
       this._addButton('读取存档', () => {
@@ -321,6 +323,11 @@ export class Game {
       this._addButton('重生', () => this.respawn());
       this._addButton('新的世界', () => this.newWorld());
     }
+    this._fullscreenButton = this._addButton(
+      this._fullscreenLabel(),
+      () => this._toggleFullscreen(),
+    );
+    this._fullscreenButton.dataset.action = 'fullscreen';
     this._updateHint();
   }
 
@@ -349,12 +356,61 @@ export class Game {
     return button;
   }
 
+  _fullscreenLabel() {
+    return document.fullscreenElement ? '退出全屏' : '全屏';
+  }
+
+  _syncFullscreenButton() {
+    if (this._fullscreenButton) this._fullscreenButton.textContent = this._fullscreenLabel();
+    if (!document.fullscreenElement) window.screen?.orientation?.unlock?.();
+  }
+
+  async _toggleFullscreen() {
+    if (document.fullscreenElement) {
+      try {
+        await document.exitFullscreen();
+      } catch (err) {
+        console.warn('[game] 退出全屏失败', err);
+        this._toast('退出全屏失败', 2);
+      }
+      return;
+    }
+
+    if (!document.documentElement.requestFullscreen) {
+      this._toast('当前浏览器不支持全屏', 2);
+      return;
+    }
+
+    try {
+      await document.documentElement.requestFullscreen();
+      if (this.isMobile) await this._lockLandscape();
+    } catch (err) {
+      console.warn('[game] 进入全屏失败', err);
+      this._toast('进入全屏失败，请检查浏览器权限', 2);
+    }
+  }
+
+  async _lockLandscape() {
+    const orientation = window.screen?.orientation;
+    if (!orientation?.lock) {
+      this._toast('当前浏览器不支持自动横屏，请旋转设备', 3);
+      return;
+    }
+    try {
+      await orientation.lock('landscape');
+    } catch (err) {
+      console.warn('[game] 横屏锁定失败', err);
+      this._toast('无法自动横屏，请旋转设备继续游戏', 3);
+    }
+  }
+
   resume() {
     this.paused = false;
     this.ui.menu.classList.add('hidden');
     this.ui.inventory.classList.add('hidden');
     this.ui.options.classList.add('hidden');
     if (!this.isMobile) this.input.requestLock();
+    else if (!document.fullscreenElement) void this._toggleFullscreen();
     this._updateHint();
     this._updateMobileControls();
   }
@@ -530,7 +586,7 @@ export class Game {
   _syncOptionControls() {
     const { hudScale, sensitivity, fov, volume, renderDistance } = this.ui;
     if (hudScale) hudScale.value = String(this.hudScale);
-    if (sensitivity) sensitivity.value = String(Math.round(this.sensitivity * 1000));
+    if (sensitivity) sensitivity.value = (this.sensitivity * 1000).toFixed(1);
     if (fov) fov.value = String(this.fov);
     if (volume) volume.value = String(Math.round(this.volume * 100));
     if (renderDistance) renderDistance.value = String(this.renderDistance);
@@ -540,7 +596,7 @@ export class Game {
       if (node) node.textContent = text;
     };
     label('opt-fov-value', String(this.fov));
-    label('opt-sensitivity-value', this.sensitivity.toFixed(3));
+    label('opt-sensitivity-value', (this.sensitivity * 1000).toFixed(1));
     label('opt-hud-scale-value', String(this.hudScale));
     label('opt-volume-value', String(Math.round(this.volume * 100)));
   }
@@ -1193,7 +1249,24 @@ async function runSelfTest(instance) {
 
     const world = instance.world;
     const renderer = instance.renderer;
+    instance.showMenu('pause');
+    const fullscreenButton = instance.ui.menuButtons.querySelector('[data-action="fullscreen"]');
+    record('fullscreen-menu-button', !!fullscreenButton && fullscreenButton.textContent === '全屏',
+      '菜单包含全屏切换按钮');
+    instance.resume();
+
     const input = instance.input;
+    const sensitivityControl = instance.ui.sensitivity;
+    const initialSensitivity = instance.sensitivity;
+    sensitivityControl.value = '3.5';
+    sensitivityControl.dispatchEvent(new Event('input', { bubbles: true }));
+    record('sensitivity-scale', Math.abs(instance.sensitivity - 0.0035) < 1e-9
+      && sensitivityControl.value === '3.5'
+      && document.getElementById('opt-sensitivity-value').textContent === '3.5',
+    '选项值 3.5 对应 0.0035 rad/px');
+    sensitivityControl.value = (initialSensitivity * 1000).toFixed(1);
+    sensitivityControl.dispatchEvent(new Event('input', { bubbles: true }));
+
     input.keys.clear();
     const fakeKeyEvent = (code, ctrlKey = false) => ({
       code, ctrlKey, metaKey: false, altKey: false, target: instance.canvas,

@@ -7816,7 +7816,8 @@ var __mc = window.__mc;
     Space: 'jump',
     ShiftLeft: 'sneak',
     ShiftRight: 'sneak',
-    KeyX: 'sprint',
+    ControlLeft: 'sprint',
+    ControlRight: 'sprint',
   };
 
   const UI_CONTROL_SELECTOR = 'button, input, select, textarea, a[href], label, [contenteditable="true"], [role="button"], [role="slider"]';
@@ -7854,13 +7855,15 @@ var __mc = window.__mc;
         if (this.textMode) return;
         if (isUiControl(event.target)) return;
         // Let the browser keep its own shortcuts (reload, close tab, devtools, ...).
-        if (event.metaKey || event.altKey || (event.ctrlKey && event.code !== 'Space')) {
+        if (event.metaKey || event.altKey
+          || (event.ctrlKey && event.code !== 'ControlLeft' && event.code !== 'ControlRight' && event.code !== 'Space')) {
           return;
         }
         const code = KEY_ALIASES[event.code] || event.code;
         if (!this.keys.has(code)) this.pressedThisFrame.add(code);
         this.keys.add(code);
-        // Keep browser shortcuts such as Ctrl+W and Ctrl+R available.
+        // Stop the browser from scrolling or tabbing away on game keys, but let
+        // Ctrl+W / Ctrl+R through so the page stays closable.
         if (['Tab', 'F3', 'Space', 'KeyW', 'KeyA', 'KeyS', 'KeyD', 'KeyE', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(event.code)
           && (!event.ctrlKey || event.code === 'Space')
           && !event.metaKey) {
@@ -9661,6 +9664,8 @@ var __mc = window.__mc;
       this._touchPlaceTimer = 0;
       this._joystickPointer = null;
       this._previousPlayerPosition = null;
+      this._fullscreenButton = null;
+      document.addEventListener('fullscreenchange', () => this._syncFullscreenButton());
 
       // ?seed=123 可以固定世界种子，便于复现问题与截图。
       const seedParam = new URLSearchParams(location.search).get('seed');
@@ -9888,7 +9893,7 @@ var __mc = window.__mc;
             <li><b>点击快捷栏</b><span>手机上点击底部物品切换</span></li>
             <li><b>空格</b><span>跳跃 / 上浮 / 上升</span></li>
             <li><b>Shift</b><span>潜行 / 下降</span></li>
-            <li><b>X 或双击 W</b><span>疾跑（避免触发浏览器 Ctrl+W 关闭标签页）</span></li>
+            <li><b>Ctrl 或双击 W</b><span>疾跑</span></li>
             <li><b>移动鼠标</b><span>转动视角</span></li>
             <li><b>鼠标左键</b><span>挖掘方块 / 攻击生物</span></li>
             <li><b>鼠标右键</b><span>放置方块</span></li>
@@ -9914,6 +9919,11 @@ var __mc = window.__mc;
         this._addButton('重生', () => this.respawn());
         this._addButton('新的世界', () => this.newWorld());
       }
+      this._fullscreenButton = this._addButton(
+        this._fullscreenLabel(),
+        () => this._toggleFullscreen(),
+      );
+      this._fullscreenButton.dataset.action = 'fullscreen';
       this._updateHint();
     }
 
@@ -9942,12 +9952,61 @@ var __mc = window.__mc;
       return button;
     }
 
+    _fullscreenLabel() {
+      return document.fullscreenElement ? '退出全屏' : '全屏';
+    }
+
+    _syncFullscreenButton() {
+      if (this._fullscreenButton) this._fullscreenButton.textContent = this._fullscreenLabel();
+      if (!document.fullscreenElement) window.screen?.orientation?.unlock?.();
+    }
+
+    async _toggleFullscreen() {
+      if (document.fullscreenElement) {
+        try {
+          await document.exitFullscreen();
+        } catch (err) {
+          console.warn('[game] 退出全屏失败', err);
+          this._toast('退出全屏失败', 2);
+        }
+        return;
+      }
+
+      if (!document.documentElement.requestFullscreen) {
+        this._toast('当前浏览器不支持全屏', 2);
+        return;
+      }
+
+      try {
+        await document.documentElement.requestFullscreen();
+        if (this.isMobile) await this._lockLandscape();
+      } catch (err) {
+        console.warn('[game] 进入全屏失败', err);
+        this._toast('进入全屏失败，请检查浏览器权限', 2);
+      }
+    }
+
+    async _lockLandscape() {
+      const orientation = window.screen?.orientation;
+      if (!orientation?.lock) {
+        this._toast('当前浏览器不支持自动横屏，请旋转设备', 3);
+        return;
+      }
+      try {
+        await orientation.lock('landscape');
+      } catch (err) {
+        console.warn('[game] 横屏锁定失败', err);
+        this._toast('无法自动横屏，请旋转设备继续游戏', 3);
+      }
+    }
+
     resume() {
       this.paused = false;
       this.ui.menu.classList.add('hidden');
       this.ui.inventory.classList.add('hidden');
       this.ui.options.classList.add('hidden');
       if (!this.isMobile) this.input.requestLock();
+      else if (!document.fullscreenElement) void this._toggleFullscreen();
       this._updateHint();
       this._updateMobileControls();
     }
@@ -10123,7 +10182,7 @@ var __mc = window.__mc;
     _syncOptionControls() {
       const { hudScale, sensitivity, fov, volume, renderDistance } = this.ui;
       if (hudScale) hudScale.value = String(this.hudScale);
-      if (sensitivity) sensitivity.value = String(Math.round(this.sensitivity * 1000));
+      if (sensitivity) sensitivity.value = (this.sensitivity * 1000).toFixed(1);
       if (fov) fov.value = String(this.fov);
       if (volume) volume.value = String(Math.round(this.volume * 100));
       if (renderDistance) renderDistance.value = String(this.renderDistance);
@@ -10133,7 +10192,7 @@ var __mc = window.__mc;
         if (node) node.textContent = text;
       };
       label('opt-fov-value', String(this.fov));
-      label('opt-sensitivity-value', this.sensitivity.toFixed(3));
+      label('opt-sensitivity-value', (this.sensitivity * 1000).toFixed(1));
       label('opt-hud-scale-value', String(this.hudScale));
       label('opt-volume-value', String(Math.round(this.volume * 100)));
     }
@@ -10786,21 +10845,33 @@ var __mc = window.__mc;
 
       const world = instance.world;
       const renderer = instance.renderer;
+      instance.showMenu('pause');
+      const fullscreenButton = instance.ui.menuButtons.querySelector('[data-action="fullscreen"]');
+      record('fullscreen-menu-button', !!fullscreenButton && fullscreenButton.textContent === '全屏',
+        '菜单包含全屏切换按钮');
+      instance.resume();
+
       const input = instance.input;
+      const sensitivityControl = instance.ui.sensitivity;
+      const initialSensitivity = instance.sensitivity;
+      sensitivityControl.value = '3.5';
+      sensitivityControl.dispatchEvent(new Event('input', { bubbles: true }));
+      record('sensitivity-scale', Math.abs(instance.sensitivity - 0.0035) < 1e-9
+        && sensitivityControl.value === '3.5'
+        && document.getElementById('opt-sensitivity-value').textContent === '3.5',
+      '选项值 3.5 对应 0.0035 rad/px');
+      sensitivityControl.value = (initialSensitivity * 1000).toFixed(1);
+      sensitivityControl.dispatchEvent(new Event('input', { bubbles: true }));
+
       input.keys.clear();
       const fakeKeyEvent = (code, ctrlKey = false) => ({
         code, ctrlKey, metaKey: false, altKey: false, target: instance.canvas,
         preventDefault() {},
       });
       input._onKeyDown(fakeKeyEvent('ControlLeft', true));
-      input._onKeyDown(fakeKeyEvent('KeyW', true));
-      record('ctrl-w-browser-shortcut', !input.isDown('KeyW') && !input.isDown('sprint'),
-        'Ctrl+W 不被游戏当作移动或疾跑输入');
-      input.keys.clear();
-      input._onKeyDown(fakeKeyEvent('KeyX'));
       input._onKeyDown(fakeKeyEvent('Space', true));
-      record('sprint-jump-input', input.isDown('sprint') && input.isDown('jump'),
-        'X 疾跑与空格跳跃同时生效');
+      record('ctrl-space-input', input.isDown('sprint') && input.isDown('jump'),
+        'Ctrl 疾跑与空格跳跃同时生效');
       input.keys.clear();
 
       const crosshair = document.getElementById('crosshair');
