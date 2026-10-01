@@ -1,0 +1,605 @@
+{
+ "generatedBy": "tools/gen-tile-manifest.mjs",
+ "note": "tile id = index in TEXTURE_NAMES + 1; atlas layout is row-major",
+ "atlasCols": 16,
+ "atlasRows": 32,
+ "tileNames": [
+  "stone",
+  "dirt",
+  "grass_top",
+  "grass_side",
+  "cobblestone",
+  "sand",
+  "sandstone_top",
+  "sandstone_side",
+  "gravel",
+  "oak_log_side",
+  "oak_log_top",
+  "oak_planks",
+  "oak_leaves",
+  "water",
+  "bedrock",
+  "coal_ore",
+  "iron_ore",
+  "gold_ore",
+  "diamond_ore",
+  "redstone_ore",
+  "emerald_ore",
+  "bricks",
+  "stone_bricks",
+  "glass",
+  "snow",
+  "ice",
+  "cactus_side",
+  "cactus_top",
+  "pumpkin_side",
+  "pumpkin_top",
+  "pumpkin_face",
+  "crafting_table_top",
+  "crafting_table_side",
+  "furnace_side",
+  "furnace_front",
+  "furnace_top",
+  "bookshelf",
+  "obsidian",
+  "netherrack",
+  "glowstone",
+  "torch",
+  "tnt_side",
+  "tnt_top",
+  "wool_white",
+  "sponge",
+  "diamond_block",
+  "gold_block",
+  "iron_block",
+  "coal_block",
+  "farmland",
+  "grass_path",
+  "lava",
+  "mycelium_top",
+  "podzol_top",
+  "clay",
+  "sugar_cane",
+  "dead_bush",
+  "rail",
+  "dandelion",
+  "poppy"
+ ],
+ "tileIds": {
+  "stone": 1,
+  "dirt": 2,
+  "grass_top": 3,
+  "grass_side": 4,
+  "cobblestone": 5,
+  "sand": 6,
+  "sandstone_top": 7,
+  "sandstone_side": 8,
+  "gravel": 9,
+  "oak_log_side": 10,
+  "oak_log_top": 11,
+  "oak_planks": 12,
+  "oak_leaves": 13,
+  "water": 14,
+  "bedrock": 15,
+  "coal_ore": 16,
+  "iron_ore": 17,
+  "gold_ore": 18,
+  "diamond_ore": 19,
+  "redstone_ore": 20,
+  "emerald_ore": 21,
+  "bricks": 22,
+  "stone_bricks": 23,
+  "glass": 24,
+  "snow": 25,
+  "ice": 26,
+  "cactus_side": 27,
+  "cactus_top": 28,
+  "pumpkin_side": 29,
+  "pumpkin_top": 30,
+  "pumpkin_face": 31,
+  "crafting_table_top": 32,
+  "crafting_table_side": 33,
+  "furnace_side": 34,
+  "furnace_front": 35,
+  "furnace_top": 36,
+  "bookshelf": 37,
+  "obsidian": 38,
+  "netherrack": 39,
+  "glowstone": 40,
+  "torch": 41,
+  "tnt_side": 42,
+  "tnt_top": 43,
+  "wool_white": 44,
+  "sponge": 45,
+  "diamond_block": 46,
+  "gold_block": 47,
+  "iron_block": 48,
+  "coal_block": 49,
+  "farmland": 50,
+  "grass_path": 51,
+  "lava": 52,
+  "mycelium_top": 53,
+  "podzol_top": 54,
+  "clay": 55,
+  "sugar_cane": 56,
+  "dead_bush": 57,
+  "rail": 58,
+  "dandelion": 59,
+  "poppy": 60
+ },
+ "aliases": {},
+ "blockFaces": [
+  [
+   1,
+   1,
+   1,
+   1,
+   1,
+   1
+  ],
+  [
+   1,
+   1,
+   1,
+   1,
+   1,
+   1
+  ],
+  [
+   4,
+   4,
+   3,
+   2,
+   4,
+   4
+  ],
+  [
+   2,
+   2,
+   2,
+   2,
+   2,
+   2
+  ],
+  [
+   5,
+   5,
+   5,
+   5,
+   5,
+   5
+  ],
+  [
+   12,
+   12,
+   12,
+   12,
+   12,
+   12
+  ],
+  [
+   15,
+   15,
+   15,
+   15,
+   15,
+   15
+  ],
+  [
+   14,
+   14,
+   14,
+   14,
+   14,
+   14
+  ],
+  [
+   6,
+   6,
+   6,
+   6,
+   6,
+   6
+  ],
+  [
+   9,
+   9,
+   9,
+   9,
+   9,
+   9
+  ],
+  [
+   10,
+   10,
+   11,
+   11,
+   10,
+   10
+  ],
+  [
+   13,
+   13,
+   13,
+   13,
+   13,
+   13
+  ],
+  [
+   8,
+   8,
+   7,
+   7,
+   8,
+   8
+  ],
+  [
+   16,
+   16,
+   16,
+   16,
+   16,
+   16
+  ],
+  [
+   17,
+   17,
+   17,
+   17,
+   17,
+   17
+  ],
+  [
+   18,
+   18,
+   18,
+   18,
+   18,
+   18
+  ],
+  [
+   19,
+   19,
+   19,
+   19,
+   19,
+   19
+  ],
+  [
+   20,
+   20,
+   20,
+   20,
+   20,
+   20
+  ],
+  [
+   21,
+   21,
+   21,
+   21,
+   21,
+   21
+  ],
+  [
+   24,
+   24,
+   24,
+   24,
+   24,
+   24
+  ],
+  [
+   22,
+   22,
+   22,
+   22,
+   22,
+   22
+  ],
+  [
+   23,
+   23,
+   23,
+   23,
+   23,
+   23
+  ],
+  [
+   25,
+   25,
+   25,
+   25,
+   25,
+   25
+  ],
+  [
+   26,
+   26,
+   26,
+   26,
+   26,
+   26
+  ],
+  [
+   27,
+   27,
+   28,
+   28,
+   27,
+   27
+  ],
+  [
+   29,
+   29,
+   30,
+   30,
+   29,
+   29
+  ],
+  [
+   40,
+   40,
+   40,
+   40,
+   40,
+   40
+  ],
+  [
+   41,
+   41,
+   41,
+   41,
+   41,
+   41
+  ],
+  [
+   33,
+   33,
+   32,
+   12,
+   33,
+   33
+  ],
+  [
+   34,
+   34,
+   36,
+   36,
+   34,
+   34
+  ],
+  [
+   37,
+   37,
+   37,
+   37,
+   37,
+   37
+  ],
+  [
+   38,
+   38,
+   38,
+   38,
+   38,
+   38
+  ],
+  [
+   39,
+   39,
+   39,
+   39,
+   39,
+   39
+  ],
+  [
+   42,
+   42,
+   43,
+   43,
+   42,
+   42
+  ],
+  [
+   44,
+   44,
+   44,
+   44,
+   44,
+   44
+  ],
+  [
+   46,
+   46,
+   46,
+   46,
+   46,
+   46
+  ],
+  [
+   47,
+   47,
+   47,
+   47,
+   47,
+   47
+  ],
+  [
+   48,
+   48,
+   48,
+   48,
+   48,
+   48
+  ],
+  [
+   49,
+   49,
+   49,
+   49,
+   49,
+   49
+  ],
+  [
+   50,
+   50,
+   50,
+   50,
+   50,
+   50
+  ],
+  [
+   51,
+   51,
+   51,
+   51,
+   51,
+   51
+  ],
+  [
+   52,
+   52,
+   52,
+   52,
+   52,
+   52
+  ],
+  [
+   53,
+   53,
+   53,
+   2,
+   53,
+   53
+  ],
+  [
+   2,
+   2,
+   54,
+   2,
+   2,
+   2
+  ],
+  [
+   55,
+   55,
+   55,
+   55,
+   55,
+   55
+  ],
+  [
+   56,
+   56,
+   56,
+   56,
+   56,
+   56
+  ],
+  [
+   57,
+   57,
+   57,
+   57,
+   57,
+   57
+  ],
+  [
+   58,
+   58,
+   58,
+   58,
+   58,
+   58
+  ],
+  [
+   10,
+   10,
+   11,
+   11,
+   10,
+   10
+  ],
+  [
+   12,
+   12,
+   12,
+   12,
+   12,
+   12
+  ],
+  [
+   13,
+   13,
+   13,
+   13,
+   13,
+   13
+  ],
+  [
+   10,
+   10,
+   11,
+   11,
+   10,
+   10
+  ],
+  [
+   12,
+   12,
+   12,
+   12,
+   12,
+   12
+  ],
+  [
+   13,
+   13,
+   13,
+   13,
+   13,
+   13
+  ],
+  [
+   59,
+   59,
+   59,
+   59,
+   59,
+   59
+  ],
+  [
+   60,
+   60,
+   60,
+   60,
+   60,
+   60
+  ],
+  [
+   13,
+   13,
+   13,
+   13,
+   13,
+   13
+  ],
+  [
+   3,
+   3,
+   3,
+   3,
+   3,
+   3
+  ],
+  [
+   1,
+   1,
+   1,
+   1,
+   1,
+   1
+  ]
+ ]
+}

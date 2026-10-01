@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>我的世界 · 网页版</title>
+<link rel="stylesheet" href="./minecraft.css" />
+</head>
+<body>
+  <canvas id="game"></canvas>
+  <div id="crosshair" class="crosshair hidden" aria-hidden="true">
+    <span></span><span></span><span></span><span></span>
+  </div>
+
+  <!-- 启动 / 地形生成界面 -->
+  <div id="loading" class="overlay">
+    <div class="panel">
+      <h1>我的世界</h1>
+      <p class="subtitle">网页版 · WebGL2 体素引擎</p>
+      <div class="progress"><div id="loading-bar"></div></div>
+      <p id="loading-text" class="dim">正在启动…</p>
+    </div>
+  </div>
+
+  <!-- 主菜单 / 暂停 / 死亡界面 -->
+  <div id="menu" class="overlay hidden">
+    <div class="panel">
+      <h1 id="menu-title">我的世界</h1>
+      <div id="menu-body" class="menu-body"></div>
+
+      <!-- 选项内嵌在菜单里，而不是另开一层浮层：独立浮层会盖住自己的按钮。
+           内容一次写好，只切换显示，避免每次重建 DOM。 -->
+      <div id="options-panel" class="options hidden">
+        <label>渲染距离
+          <select id="opt-render-distance">
+            <option value="3">3 区块（极近）</option>
+            <option value="4">4 区块（近）</option>
+            <option value="6">6 区块（中）</option>
+            <option value="8">8 区块（远）</option>
+            <option value="12">12 区块（极远）</option>
+          </select>
+        </label>
+        <label><span>视野角度：<b id="opt-fov-value">70</b>°</span>
+          <input id="opt-fov" type="range" min="50" max="110" step="1" value="70" />
+        </label>
+        <label><span>鼠标灵敏度：<b id="opt-sensitivity-value">2.2</b></span>
+          <input id="opt-sensitivity" type="range" min="500" max="6000" step="100" value="2200" />
+        </label>
+        <label><span>界面缩放：<b id="opt-hud-scale-value">1</b> 倍</span>
+          <input id="opt-hud-scale" type="range" min="1" max="3" step="0.5" value="1" />
+        </label>
+        <label><span>音量：<b id="opt-volume-value">70</b>%</span>
+          <input id="opt-volume" type="range" min="0" max="100" step="5" value="70" />
+        </label>
+      </div>
+
+      <div id="menu-buttons" class="buttons"></div>
+    </div>
+  </div>
+
+  <!-- 物品栏与合成 -->
+  <div id="inventory-panel" class="overlay hidden">
+    <div class="panel wide">
+      <h1>物品栏</h1>
+      <div class="inv-columns">
+        <div>
+          <h2>物品</h2>
+          <div id="inventory-grid" class="inv-grid"></div>
+          <p class="dim small">点击格子可把它放到当前选中的快捷栏位置。<br>
+            创造模式下这里会变成方块选择面板。</p>
+        </div>
+        <div>
+          <h2>合成</h2>
+          <div id="recipe-list" class="recipe-list"></div>
+        </div>
+      </div>
+      <div class="buttons">
+        <button id="inv-close">返回游戏（E）</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 世界内提示文字 -->
+  <div id="hint" class="hidden">点击开始游戏</div>
+  <div id="toast" class="hidden"></div>
+  <pre id="debug" class="hidden"></pre>
+  <div id="version">网页版 · 按 F3 查看调试信息</div>
+
+  <div id="mobile-controls" class="mobile-controls hidden" aria-label="触屏操作">
+    <div id="mobile-joystick" class="mobile-joystick" aria-label="移动摇杆">
+      <div id="mobile-joystick-knob" class="mobile-joystick-knob"></div>
+    </div>
+    <div class="mobile-actions">
+      <button type="button" class="mobile-button mobile-inventory" data-touch-action="inventory" aria-label="打开物品栏">物品</button>
+      <button type="button" class="mobile-button mobile-pause" data-touch-action="pause" aria-label="暂停">暂停</button>
+      <button type="button" class="mobile-button mobile-sneak" data-touch-key="sneak" aria-label="潜行或下降">潜行</button>
+      <button type="button" class="mobile-button mobile-jump" data-touch-key="jump" aria-label="跳跃">跳跃</button>
+    </div>
+  </div>
+
+  <!-- 这里是普通脚本而不是 ES 模块：正因如此，双击 minecraft.html 就能直接运行，
+       也能直接部署到 GitHub Pages。修改 src/ 后请执行：node tools/build.mjs -->
+  <script src="./minecraft.bundle.js"></script>
+</body>
+</html>

@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>sfx.js verification</title>
+<style>
+  body { font: 13px/1.45 ui-monospace, Consolas, serif; margin: 12px; background: #111; color: #ddd; }
+  h1 { font-size: 15px; }
+  pre { white-space: pre-wrap; }
+</style>
+</head>
+<body>
+<h1>src/audio/sfx.js verification</h1>
+<pre id="out"></pre>
+<script type="module">
+import * as sfx from '../src/audio/sfx.js';
+
+const out = document.getElementById('out');
+const lines = [];
+const log = (s) => { lines.push(String(s)); out.textContent = lines.join('\n'); };
+
+/** Promise sleep used to space out the playSfx calls below. */
+const sleep = (ms) => new Promise((res) => setTimeout(res, ms));
+
+/** Try fn(); record 'ok' or the exception message. */
+function run(label, fn) {
+  try {
+    fn();
+    log(label + ': ok');
+  } catch (e) {
+    log(label + ': THREW ' + (e && e.message ? e.message : String(e)));
+  }
+}
+
+const dbg = globalThis.__sfxDebug || null;
+const snap = () => (dbg ? dbg.active + '/' + dbg.scheduled + '/' + dbg.dropped : 'n/a');
+const ex = globalThis.__sfxErrors || [];
+addEventListener('error', (e) => {
+  ex.push('window error: ' + (e.message || e.type));
+  log('UNCAUGHT ' + (e.message || e.type));
+});
+addEventListener('unhandledrejection', (e) => {
+  ex.push('unhandled rejection: ' + (e.reason && e.reason.message ? e.reason.message : e.reason));
+  log('UNHANDLED REJECTION ' + (e.reason && e.reason.message ? e.reason.message : e.reason));
+});
+
+log('module keys: ' + Object.keys(sfx).sort().join(', '));
+log('typeof exports: ' +
+    ['initAudio', 'setVolume', 'getVolume', 'suspendAudio', 'resumeAudio', 'playSfx']
+      .map((k) => k + '=' + typeof sfx[k]).join(' '));
+
+/* 1. Everything must be callable before initAudio() and never throw. */
+run('playSfx before initAudio (must be ignored, no throw)', () => sfx.playSfx('dig.stone'));
+run('setVolume before initAudio', () => sfx.setVolume(0.5));
+run('getVolume before initAudio', () => sfx.getVolume());
+run('suspendAudio before initAudio', () => sfx.suspendAudio());
+run('resumeAudio before initAudio', () => sfx.resumeAudio());
+log('-> volume before init: ' + sfx.getVolume() + ' (context created: ' + !!(dbg && dbg.hasContext) + ')');
+log('');
+
+/* 2. Create the context. */
+run('initAudio()', () => sfx.initAudio());
+log('after initAudio #1: hasContext=' + (dbg ? dbg.hasContext : '?') + ' state=' + (dbg ? dbg.state : '?'));
+run('initAudio() #2 (must be idempotent)', () => sfx.initAudio());
+run('initAudio() #3 (must be idempotent)', () => sfx.initAudio());
+log('AudioContext: ' + (dbg ? ('available=' + dbg.hasContext + ' state=' + dbg.state +
+    ' sampleRate=' + dbg.sampleRate + ' silentMode=' + dbg.silentMode) : 'no diagnostics hook'));
+log('');
+
+/* 3. Every supported name, one voice at a time (spaced so the 24-voice cap
+      is never what makes a name fail). */
+const names = (dbg && typeof dbg.names === 'function')
+  ? dbg.names()
+  : ['dig.stone', 'dig.wood', 'dig.grass', 'dig.sand', 'dig.gravel', 'dig.glass', 'dig.wool',
+     'place', 'step.stone', 'step.wood', 'step.grass', 'step.sand', 'step.gravel', 'step.wool',
+     'player.hurt', 'player.death', 'mob.pig', 'mob.sheep', 'mob.zombie', 'mob.hurt',
+     'item.pickup', 'item.pop', 'click', 'open', 'close', 'splash', 'explode', 'fuse',
+     'levelup', 'bow', 'arrow', 'door', 'chest', 'furnace', 'anvil', 'water.ambient', 'rain'];
+
+log('supported names reported by module: ' + names.length);
+if (dbg) dbg.reset();
+
+let scheduledBefore = dbg ? dbg.scheduled : 0;
+let last = -1;
+
+async function playAll() {
+  for (const name of names) {
+    const before = dbg ? dbg.scheduled : 0;
+    try {
+      sfx.playSfx(name);
+      const after = dbg ? dbg.scheduled : 0;
+      const voices = after - before;
+      last = after;
+      log('playSfx(\'' + name + '\'): ok  voices=' + voices +
+          ' active=' + (dbg ? dbg.active : '?') + ' dropped=' + (dbg ? dbg.dropped : '?'));
+    } catch (e) {
+      log('playSfx(\'' + name + '\'): THREW ' + (e && e.message ? e.message : String(e)));
+    }
+    await sleep(130);
+  }
+  log('');
+  log('scheduled voices across all names: ' + (last - scheduledBefore) + ' of ' + names.length + ' names');
+  log('voices dropped while playing all names: ' + (dbg ? dbg.dropped : '?'));
+  log('active voices now: ' + (dbg ? dbg.active : '?'));
+  log('');
+
+  /* 4. Options: pan / rate / volume / out-of-range values. */
+  run('playSfx(click, {pan:-1})', () => sfx.playSfx('click', { pan: -1 }));
+  run('playSfx(click, {pan:1, rate:2})', () => sfx.playSfx('click', { pan: 1, rate: 2 }));
+  run('playSfx(mob.pig, {volume:0.2, rate:0.5, pan:0.35})',
+      () => sfx.playSfx('mob.pig', { volume: 0.2, rate: 0.5, pan: 0.35 }));
+  run('playSfx(step.stone, {volume:NaN, rate:Infinity, pan:"left"})',
+      () => sfx.playSfx('step.stone', { volume: NaN, rate: Infinity, pan: 'left' }));
+  await sleep(700);
+  log('');
+
+  /* 5. Unknown / invalid names must be ignored in silence. */
+  run('playSfx(\'does.not.exist\')', () => sfx.playSfx('does.not.exist'));
+  run('playSfx(\'\')', () => sfx.playSfx(''));
+  run('playSfx(undefined)', () => sfx.playSfx(undefined));
+  run('playSfx(null)', () => sfx.playSfx(null));
+  await sleep(200);
+  log('');
+
+  /* 6. Volume API. */
+  run('setVolume(0.5)', () => sfx.setVolume(0.5));
+  log('getVolume() after setVolume(0.5): ' + sfx.getVolume());
+  run('setVolume(2)', () => sfx.setVolume(2));
+  log('getVolume() after setVolume(2): ' + sfx.getVolume() + ' (clamped to 1)');
+  run('setVolume(-4)', () => sfx.setVolume(-4));
+  log('getVolume() after setVolume(-4): ' + sfx.getVolume() + ' (clamped to 0)');
+  run('setVolume(NaN)', () => sfx.setVolume(NaN));
+  log('getVolume() after setVolume(NaN): ' + sfx.getVolume() + ' (ignored)');
+  run('setVolume(0.8)', () => sfx.setVolume(0.8));
+  log('');
+
+  /* 7. Suspend / resume and closed-context safety. */
+  run('suspendAudio()', () => {
+    sfx.suspendAudio();
+    sfx.suspendAudio();          // second call must also be safe
+  });
+  await sleep(120);
+  log('state after suspendAudio(): ' + (dbg ? dbg.state : '?'));
+  const midSuspend = (() => {
+    try { sfx.playSfx('explode'); return 'ok'; } catch (e) { return 'THREW ' + e.message; }
+  })();
+  log('playSfx while suspended: ' + midSuspend);
+  run('resumeAudio()', () => {
+    sfx.resumeAudio();
+    sfx.resumeAudio();           // second call must also be safe
+  });
+  await sleep(150);
+  log('state after resumeAudio(): ' + (dbg ? dbg.state : '?'));
+  log('');
+
+  /* 8. Voice cap: 40 immediate calls may only produce MAX_VOICES voices. */
+  if (dbg) dbg.reset();
+  let cappedDrops0 = dbg ? dbg.dropped : 0;
+  run('40 immediate playSfx(\'explode\') calls', () => {
+    for (let i = 0; i < 40; i++) sfx.playSfx('explode');
+  });
+  log('capped burst: scheduled=' + (dbg ? dbg.scheduled : '?') +
+      ' active=' + (dbg ? dbg.active : '?') +
+      ' dropped=' + (dbg ? (dbg.dropped - cappedDrops0) : '?') +
+      ' (cap is ' + (dbg ? dbg.cap : 24) + ')');
+  await sleep(300);
+  log('');
+
+  /* 9. Closed context: everything must still be a silent no-op. */
+  run('close the AudioContext', () => {
+    const c = dbg && dbg.context;
+    if (c && typeof c.close === 'function') c.close();
+  });
+  await sleep(200);
+  log('state reported after close: ' + (dbg ? dbg.state : '?'));
+  run("playSfx('dig.stone') on closed context", () => sfx.playSfx('dig.stone'));
+  run("playSfx('rain') on closed context", () => sfx.playSfx('rain', { pan: 0.5 }));
+  run('suspendAudio() on closed context', () => sfx.suspendAudio());
+  run('resumeAudio() on closed context', () => sfx.resumeAudio());
+  run('setVolume(0.3) on closed context', () => sfx.setVolume(0.3));
+  run('getVolume() on closed context', () => sfx.getVolume());
+  run('initAudio() on closed context', () => sfx.initAudio());
+  log('');
+
+  /* 10. Verdict. */
+  const bad = lines.filter((l) => /THREW|UNCAUGHT|UNHANDLED/.test(l));
+  log('=== RESULT: ' + bad.length + ' problems, ' + lines.length + ' lines ===');
+  log('window error events captured: ' + ex.length);
+  window.__sfxDone = true;
+  document.title = 'done:' + bad.length;
+}
+
+playAll().catch((e) => { log('FATAL ' + (e && e.message ? e.message : String(e))); window.__sfxDone = true; });
+</script>
+</body>
+</html>

@@ -1,0 +1,233 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>小游戏</title>
+    <link rel="shortcut icon" href="image/index.png" type="image/x-icon">
+<style type="text/css">
+  /* 全局重置与黑白灰基调设置 */
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  body {
+    background-color: #f5f5f5; /* 浅灰背景 */
+    color: #333; /* 深灰文本 */
+    font-family: "Microsoft YaHei", Arial, sans-serif;
+    line-height: 1.8;
+  }
+
+  /* 标题样式 */
+  h1 {
+    color: #222; /* 近黑标题 */
+    margin: 20px 0;
+    font-weight: 600;
+  }
+
+  /* 介绍文本居中对齐（核心需求） */
+  .intro-text {
+    text-align: center;
+    width: 80%;
+    margin: 0 auto 30px;
+    font-size: 16px;
+    color: #444;
+  }
+
+  /* 下载按钮样式（黑白灰风格） */
+  .download-btn {
+    display: inline-block;
+    width: 120px;
+    height: 40px;
+    line-height: 40px;
+    background-color: #333; /* 深灰背景 */
+    color: #fff; /* 白色文字 */
+    text-align: center;
+    text-decoration: none;
+    border-radius: 4px;
+    margin: 20px 0;
+    transition: background-color 0.3s;
+  }
+
+  .download-btn:hover {
+    background-color: #555; /* 浅灰hover效果 */
+  }
+
+  /* 新增：抽屉提示样式 */
+  .drawer-container {
+    position: relative;
+    display: inline-block;
+  }
+  
+  .drawer-tip {
+    position: absolute;
+    top: 0;
+    left: 100%;
+    margin-left: 10px;
+    width: 100px;
+    height: 40px;
+    line-height: 40px;
+    background-color: #555;
+    color: #fff;
+    text-align: center;
+    border-radius: 4px;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateX(-10px);
+    transition: all 0.3s ease;
+    z-index: 100;
+  }
+  
+  .drawer-container:hover .drawer-tip {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(0);
+  }
+
+  /* 代码容器样式（保证左对齐、适配行号） */
+  .code-container {
+    width: 85%;
+    margin: 0 auto 40px;
+    text-align: left; /* 代码左对齐 */
+  }
+
+  /* 自定义Java代码块样式（无外部JS，纯CSS） */
+  .java-code-block {
+    background-color: #2d2d2d !important; /* 深灰代码背景 */
+    color: #ccc !important; /* 默认浅灰普通文字 */
+    padding: 20px !important;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    margin: 15px 0 !important;
+    overflow-x: auto;
+    text-align: left !important; /* 强制左对齐 */
+    font-family: Consolas, "Courier New", monospace; /* 等宽字体，更贴合代码风格 */
+    line-height: 1.2; /* 关键修改1：减小代码块整体行高，让行更紧凑 */
+    counter-reset: line-num; /* 初始化行号计数器 */
+    white-space: pre; /* 关键修改2：精准控制空白，不自动换行多余空白 */
+  }
+
+  /* 行号实现（伪元素，无需JS） */
+  .java-code-block .line {
+    position: relative;
+    padding-left: 40px; /* 为行号预留空间 */
+    display: block; /* 每行独占一行 */
+    margin: 0; /* 关键修改3：清除行的上下外边距 */
+    padding-top: 0; /* 清除行的上内边距 */
+    padding-bottom: 0; /* 清除行的下内边距 */
+  }
+
+  .java-code-block .line:before {
+    counter-increment: line-num; /* 每行计数器+1 */
+    content: counter(line-num); /* 显示行号 */
+    position: absolute;
+    left: 0;
+    top: 0;
+    color: #888; /* 行号文字颜色（浅灰） */
+    text-align: right;
+    width: 30px; /* 行号宽度 */
+    padding-right: 10px;
+    border-right: 1px solid #555; /* 行号右侧分隔线（灰调） */
+  }
+
+  /* 代码彩色高亮样式定义（核心：通过不同class设置color） */
+  .kw { /* 关键字（public、static、if、else等） */
+    color: #cc7832; /* 橙色，贴近传统代码高亮风格 */
+  }
+
+  .str { /* 字符串（""包裹的内容） */
+    color: #6a8759; /* 绿色 */
+  }
+
+  .cmt { /* 注释（// 或 /* */ */
+    color: #808080; /* 灰色，斜体增强区分 */
+    font-style: italic;
+  }
+
+  .cls { /* 类名、接口名 */
+    color: #4ec9b0; /* 青色 */
+  }
+
+  .meth { /* 方法名 */
+    color: #dcdcaa; /* 浅黄色 */
+  }
+
+  .pkg { /* 包名、导入路径 */
+    color: #9cdcfe; /* 淡蓝色 */
+  }
+
+  .exc { /* 异常类 */
+    color: #c586c0; /* 紫色 */
+  }
+
+  .var { /* 变量名（可选，提升区分度） */
+    color: #9cdcfe; /* 淡蓝色 */
+  }
+
+  /* 表格样式（黑白灰适配） */
+  table {
+    width: 90%;
+    margin: 0 auto 30px;
+    border-collapse: collapse;
+    background-color: #fff; /* 白色表格背景 */
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  }
+
+  table td {
+    padding: 12px;
+    border: 1px solid #eee; /* 浅灰表格边框 */
+    vertical-align: top;
+  }
+
+  .table-header-left {
+    width: 30%;
+    height: 30px;
+    background-color: #e0e0e0; /* 浅灰表格头部 */
+    color: #333;
+    text-align: left;
+    padding-left: 20px;
+  }
+
+  .table-header-right {
+    width: 30%;
+    height: 30px;
+    background-color: #e0e0e0; /* 浅灰表格头部 */
+    color: #333;
+    text-align: right;
+    padding-right: 20px;
+  }
+
+  .table-code-bg {
+    background-color: #2d2d2d; /* 表格内代码背景（与代码块一致） */
+    color: #ccc;
+    text-align: left !important; /* 强制左对齐 */
+    padding: 15px !important;
+    font-family: Consolas, "Courier New", monospace;
+  }
+
+  /* 页面整体居中容器 */
+  .container {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px 0;
+    text-align: center;
+  }
+</style>
+</head>
+
+<body><table width="100%%" border="0" cellspacing="0" cellpadding="0" align="center">
+  <tbody>
+    <tr align="center">
+      <td bgcolor="#F5F5F5"><a href="tcs.html" class="download-btn">贪吃蛇</a></td>
+    </tr>
+    <tr align="center">
+      <td bgcolor="#F5F5F5"><a href="minecraft.html" class="download-btn">Minecraf</a></td>
+    </tr>
+  </tbody>
+</table>
+
+    
+</body>
+</html>
